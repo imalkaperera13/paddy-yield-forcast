@@ -29,7 +29,7 @@ def where_am_i() -> str:
 
 def main() -> int:
     print(f"environment : {where_am_i()}")
-    print(f"python      : {sys.version.split()[0]}  (target 3.11)")
+    print(f"python      : {sys.version.split()[0]}  (target 3.11/3.12)")
     print(f"executable  : {sys.executable}")
     print(f"in venv     : {sys.prefix != sys.base_prefix}")
     missing = []

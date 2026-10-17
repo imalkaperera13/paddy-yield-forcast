@@ -1,4 +1,4 @@
-# Target: Python 3.11. Versions pinned for reproducibility (hard rule 5).
+# Target: Python 3.11 or 3.12 (local machine uses 3.12). Versions pinned for reproducibility (hard rule 5).
 numpy==1.26.4
 pandas==2.2.3
 scipy==1.13.1
@@ -13,6 +13,7 @@ pyyaml==6.0.2
 # Geospatial / Earth Engine (heavy exports run on the local Windows machine)
 earthengine-api==1.4.3
 geemap==0.35.1
+setuptools==75.8.0   # geemap imports pkg_resources; py3.12 venvs ship without setuptools
 geopandas==1.0.1
 rasterio==1.4.3
 shapely==2.0.6
@@ -24,8 +25,8 @@ seaborn==0.13.2
 pytest==8.3.4
 ruff==0.8.4
 
-# Kaggle CLI: version pinned from your pip freeze after the first install
-kaggle
+# Kaggle CLI (2.x: `kaggle auth login` or ~/.kaggle/access_token)
+kaggle==2.2.4
 
 # Optional (install only when needed)
 # mapie==0.9.1

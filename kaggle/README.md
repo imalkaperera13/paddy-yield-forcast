@@ -19,10 +19,9 @@ Warning: about 1,000 district-season rows is small for a neural network. An LSTM
 
 ## One-time setup (you do this, never paste the token in chat)
 
-1. Kaggle → Settings → API → create a token. Save it as `~/.kaggle/kaggle.json`, or use `kaggle auth login`.
-   - Git Bash: `chmod 600 ~/.kaggle/kaggle.json`
-   - Windows ACLs ignore chmod, but the file stays in your profile folder, outside the repo, and `.gitignore` blocks `kaggle.json` anyway.
-2. `pip install kaggle`
+1. Easiest (Kaggle CLI 2.x): run `.venv/Scripts/kaggle auth login`, which opens the browser; log in and allow. No token file to manage.
+   Alternative: kaggle.com → profile picture → Settings → API → **Generate New Token**, and save the string as `~/.kaggle/access_token`. Then run `chmod 600 ~/.kaggle/access_token`.
+2. The `kaggle` CLI is already installed by `requirements.txt` (pinned 2.2.4).
 3. Set `kaggle.username` in `configs/config.yaml` (your username is not a secret).
 
 ## Each round

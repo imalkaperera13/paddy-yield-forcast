@@ -3,7 +3,8 @@
 Every modelling and data choice, with the reason. Newest entries at the bottom of each section.
 
 ## Task 0 — scaffold (2026-10-17)
-- **Python target 3.11**, dependencies pinned in `requirements.txt`. The scaffold was built and tested on Python 3.13 in a Linux container; the real runs use 3.11 on Windows or Kaggle.
+- **Python**: 3.11 was the target. The local machine uses **3.12**, because only 3.12 and 3.14 are installed and 3.14 is too new for the pinned stack. Every pinned package supports 3.12, and Kaggle images are 3.11/3.12. Each kernel logs its exact version.
+- **Python target 3.11 (original)**, dependencies pinned in `requirements.txt`. The scaffold was built and tested on Python 3.13 in a Linux container; the real runs use 3.11 on Windows or Kaggle.
 - **Config** lives only in `configs/config.yaml`. Code reads it through `src/config.py`.
 - **Seeds**: base seed 42; a spread is reported over the five seeds in `project.seeds_for_spread`.
 - **Tracking**: MLflow with a local file store (`./mlruns`, git-ignored).

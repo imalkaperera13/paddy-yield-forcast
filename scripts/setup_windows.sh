@@ -16,18 +16,23 @@ git --version
 git status -sb | head -3
 git remote -v | sed -E 's#https://[^@]*@#https://#'   # hide any token in the URL
 
-step "2. Python 3.11"
-if py -3.11 --version 2>/dev/null; then
-  PY="py -3.11"
-else
-  echo "Python 3.11 NOT FOUND (py -3.11 failed). Installed versions:"
+step "2. Python (3.11 preferred, 3.12 accepted; 3.13+/3.14 not supported by the pinned geo/ML stack)"
+PY=""
+for v in 3.11 3.12; do
+  if py -$v --version >/dev/null 2>&1; then PY="py -$v"; break; fi
+done
+if [ -z "$PY" ]; then
+  echo "Neither Python 3.11 nor 3.12 found. Installed versions:"
   py -0p 2>/dev/null || python --version
-  echo "STOP: install Python 3.11 first (see Claude's instructions), then re-run."
+  echo "STOP: install Python 3.12 (python.org), then re-run."
   exit 1
 fi
+$PY --version
+echo "using: $PY"
 
 step "3. Virtual environment .venv"
 if [ ! -d .venv ]; then $PY -m venv .venv; fi
+if [ ! -f .venv/Scripts/activate ]; then echo "STOP: venv creation failed"; exit 1; fi
 source .venv/Scripts/activate
 python --version
 which python
