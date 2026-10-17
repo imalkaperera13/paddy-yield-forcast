@@ -14,6 +14,7 @@ pyyaml==6.0.2
 earthengine-api==1.4.3
 geemap==0.35.1
 setuptools==75.8.0   # geemap imports pkg_resources; py3.12 venvs ship without setuptools
+ipython==8.31.0      # geemap 0.35 imports IPython.core.display.display, removed in IPython 9
 geopandas==1.0.1
 rasterio==1.4.3
 shapely==2.0.6
