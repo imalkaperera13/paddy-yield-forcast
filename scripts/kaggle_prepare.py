@@ -63,11 +63,17 @@ def prepare_data(cfg: dict) -> None:
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     shutil.copy2(src, out / src.name)
-    for extra in ["docs/data_dictionary.md"]:
-        shutil.copy2(ROOT / extra, out / Path(extra).name)
+    # everything later experiments need to rebuild features at other lead times / shifts
+    extras = ["data/processed/feature_list.json", "data/processed/series_rain_daily.parquet",
+              "data/processed/series_modis.parquet", "data/processed/series_era5_daily.parquet",
+              "data/interim/dcs_yield_tidy.csv", "docs/data_dictionary.md", "docs/data_card.md"]
+    for extra in extras:
+        if (ROOT / extra).exists():
+            shutil.copy2(ROOT / extra, out / Path(extra).name)
     manifest = {
         "file": src.name,
         "sha256": _sha256(src),
+        "files": {p.name: _sha256(p) for p in sorted(out.iterdir()) if p.is_file()},
         "built_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "git_commit": _git_commit(),
         "git_dirty": _git_dirty(),

@@ -105,7 +105,7 @@ figures:
   dpi: 300
 
 kaggle:
-  username: TBD                 # your Kaggle username (not secret); token stays in ~/.kaggle only
+  username: imalkaperera          # Kaggle username (not secret); token stays in ~/.kaggle only
   data_slug: paddy-master-table
   data_title: Paddy master table
   code_slug: paddy-yield-code

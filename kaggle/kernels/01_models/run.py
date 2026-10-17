@@ -17,6 +17,13 @@ EXPERIMENT = "01_models"
 
 # Kaggle mounts datasets at /kaggle/input/<slug>/ (newer images may nest under datasets/<user>/)
 candidates = list(Path("/kaggle/input").rglob("repo/COMMIT"))
+if not candidates:   # code dataset uploaded with --dir-mode zip and not auto-extracted
+    import zipfile
+    for z in Path("/kaggle/input").rglob("repo.zip"):
+        dest = Path("/kaggle/working/_code")
+        zipfile.ZipFile(z).extractall(dest)
+        candidates = list(dest.rglob("COMMIT"))
+        break
 if not candidates:
     raise SystemExit("Code dataset not attached: add it to dataset_sources in kernel-metadata.json")
 repo = candidates[0].parent
@@ -28,9 +35,13 @@ from src.kaggle_env import banner, output_dir  # noqa: E402
 
 cfg = load_config(repo / "configs" / "config.yaml")
 set_seed(cfg["project"]["seed"])
-info = banner(DATA_SLUG, code_commit=commit)
+data_dir = next(Path("/kaggle/input").rglob("master_table.parquet")).parent
+info = banner(DATA_SLUG, code_commit=commit, data_dir=data_dir)
 out = output_dir(EXPERIMENT)
 (out / "run_info.json").write_text(__import__("json").dumps(info, indent=2))
 
-# Wired up when the corresponding task is implemented. Nothing is faked meanwhile.
-raise NotImplementedError("Experiment '01_models' is not implemented yet.")
+print("data dir:", data_dir)
+from src.experiments.models import main  # noqa: E402
+
+main(data_dir, out)
+
