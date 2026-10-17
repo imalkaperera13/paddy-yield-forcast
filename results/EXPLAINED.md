@@ -1,6 +1,6 @@
 # Results explained
 
-> **Status: no results yet.** Every table and figure below is filled in only from code that has been run. Each one cites its Kaggle kernel version and git commit.
+> **Status: kernel 01 results in (2026-10-17); later sections pending.** Every table and figure below is filled in only from code that has been run. Each one cites its Kaggle kernel version and git commit.
 
 For each item, the explanation covers:
 - what it shows,
@@ -9,10 +9,23 @@ For each item, the explanation covers:
 - why it may have happened. These reasons are hypotheses unless they were tested.
 
 ## Model comparison
-_pending (Task 5)_
+*Source: kernel `paddy-01-baselines-and-models` v2, commit `3a1d358`; table in `RESULTS.md` §1.*
+- **What it shows:** the error of each model, forecasting at the reference harvest date, over 808 district-seasons in 33 test seasons (2009/10–2025/26).
+- **How to read it:** lower RMSE/MAE is better. Errors average about 15% of mean yield (RMSE) and about 11% (MAE). The random forest (604 kg/ha RMSE) and the last-5-seasons baseline (606) are level. Ridge (620), XGBoost (633), LightGBM (634) and the hybrid (661) are all worse than the baseline.
+- **What it does not prove:** that satellite/climate data carry no signal. It shows only that, with these features, about 25 seasons per district and these models, they do not reduce error *on average* below a district's own recent history. Results at earlier lead times, in shock seasons and per feature group are still to come.
+- **Why it may have happened (hypotheses, untested):**
+  - Most variance is between districts and is slow-moving, which the baseline already captures.
+  - 120 features against about 600–1,000 training rows per fold invites overfitting; boosting with tuned depth is more prone to this than a bagged forest.
+  - The labels are noisy crop-cut estimates.
+  - The wet-zone cropland mask covers little paddy, so NDVI there is weak.
+  - The hybrid model learns year-to-year residuals that may be mostly noise, then adds them on top of the baseline.
 
 ## Paired Wilcoxon vs baseline
-_pending (Task 6)_
+*Source: as above; `RESULTS.md` §2.*
+- **What it shows:** whether each model's absolute errors are systematically smaller than the baseline's on the same district-seasons.
+- **How to read it:** p (Holm) < 0.05 means a real difference. The sign of r gives the direction, and its size gives the effect (|r| < 0.1 is negligible).
+- **Result:** random forest, ridge, LightGBM and XGBoost all have p (Holm) ≈ 0.45 and |r| ≤ 0.065, so there is no detectable difference from the baseline. The hybrid is significantly worse (r = −0.19, p < 0.001).
+- **What it does not prove:** that the models are *equal* to the baseline. A non-significant test is not evidence of equivalence. The rows are also not fully independent, because districts in the same season share weather.
 
 ## Conformal coverage and interval width
 _pending (Task 7)_
@@ -30,7 +43,12 @@ _pending (Task 10)_
 _pending_
 
 ## Why random k-fold would inflate scores here
-_pending: this needs a demonstration run that scores the same model with random k-fold and with forward-chaining (kernel 01_models)._
+*Source: as above; `RESULTS.md` §4.*
+The same LightGBM model was scored on the same 808 rows two ways:
+- **Forward-chaining:** R² 0.467, RMSE 639 kg/ha.
+- **Random 5-fold:** R² 0.713, RMSE 468 kg/ha.
+
+Random folds therefore make the model look about 27% better on RMSE and add about 0.25 to R². The reason is that random folds put *later* seasons, and other districts in the *same* season, into training. The model then learns that season's shared weather and fertiliser shock, and the yield trend after the test year: information that would not exist at forecast time. This is why random k-fold is banned for the main results (`random_kfold` raises an error).
 
 ## Limitations observed
 _Filled from the data as work proceeds. Items known so far (Task 1, from the DCS files):_

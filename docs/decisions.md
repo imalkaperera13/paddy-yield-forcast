@@ -105,3 +105,10 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - Only total evaporation is used, sign-flipped. The component evaporation bands are mislabelled in the source (EE catalog note).
 - ASSUMPTION: 7-day data latency (ERA5T is ~5 days behind real time). Heat-stress day = daily max ≥ 35 °C (config).
 - Result: the master table has 120 features. Because 120 features is about a tenth of the 1,266 rows, regularised and tree models are preferred, and the feature-group ablation (Task 9) will show whether this group helps.
+
+## Task E1 — kernel 01 models run (2026-10-17)
+- **Kernel** `imalkaperera/paddy-01-baselines-and-models` v2 (CPU, internet off), 10,751 s. Inputs: `paddy-master-table` v1 (master SHA-256 `2a8fdc80…`) and `paddy-yield-code` v1 (COMMIT `3a1d358`). The kernel wrapper came from the next commit; it differs only in how it finds the datasets.
+- **v1 failed** after 10 s: the code dataset's zip is auto-extracted *without* the `repo/` folder, so the `repo/COMMIT` search failed. Fixed by finding `COMMIT` next to `src/` with `os.walk(followlinks=True)` and printing `/kaggle/input` at start.
+- **Library versions differ from `requirements.txt`.** Kaggle's image provides sklearn 1.6.1, lightgbm 4.6.0, xgboost 3.4.1, numpy 2.1.3, pandas 2.3.3 and Python 3.13.15; the run used these, not the pinned versions. The exact versions are recorded in `results/runs_meta/01_models/run_info.json`. MLflow is not installed on the image, so tracking fell back to `runs_log.jsonl` (by design).
+- **Result:** no model beats the last-5 baseline at lead 0 (Wilcoxon, Holm). The hybrid is significantly worse. Random 5-fold inflates R² from 0.47 to 0.71. Details: `results/RESULTS.md`.
+- **Decision:** keep the baseline as the reference. The next steps test where models *could* add value: earliness (is there signal before harvest?), shock seasons, feature-group ablation, and conformal intervals around the baseline and the random forest.
