@@ -16,12 +16,25 @@ Three file defects were corrected in code:
 
 Published yields of 0 kg/ha accompanied by positive production were treated as not reported. Missing district-seasons (101 of 2,375) were dropped, not imputed.
 ### 1.2 District boundaries: HDX COD-AB Sri Lanka
-_pending_
-### 1.3 Satellite and climate features
-_pending (Task 2): dataset IDs, versions, scale, temporal coverage, cropland mask (WorldCover class 40 as proxy)_
+Administrative level-2 (district) polygons, COD-AB v03 (valid from 2022-08-16), from the Humanitarian Data Exchange. The file was downloaded on 2026-10-17. The 25 districts were joined to the DCS names via P-codes (`configs/district_map.csv`) and simplified by 100 m before use in Google Earth Engine.
+
+### 1.3 Satellite and climate data (Google Earth Engine, extracted 2026-10-17, earthengine-api 1.4.3)
+- **MODIS MOD13Q1 v061** (`MODIS/061/MOD13Q1`): 16-day 250 m NDVI and EVI, 2000-02-18 to 2026-09-14, scaled by 0.0001. Only pixels with SummaryQA ≤ 1 (good or marginal) are kept. District values are means over cropland pixels, with the valid-pixel count recorded. 15,300 district-composites; 30 had no valid pixels.
+- **CHIRPS v2.0 pentad** (`UCSB-CHG/CHIRPS/PENTAD`): ~5.5 km rainfall, 1981-01-01 to 2026-10-01, as district means (no cropland weighting). 82,350 district-pentads.
+- **Cropland mask:** ESA WorldCover v200 (2021) class 40 ("cropland"), aggregated to the MODIS grid. A 250 m pixel is treated as cropland if ≥ 50% of its 10 m cells are class 40. WorldCover has no paddy class, so this is a proxy. Its area is 0.85× the DCS Maha sown extent nationally, but only 0.10–0.47× in wet-zone districts.
 
 ## 2. Features
-_pending: growth-stage windows, aggregation, lagged yields (past seasons only)_
+Each season is anchored at a nominal planting date: Maha 15 October, Yala 15 April. From the anchor come five consecutive 4-week growth blocks (b1–b5) and one pre-season block. The reference harvest date is anchor + 140 days. A forecast with lead time *L* weeks is made at reference harvest − *L*, and uses only data available at that date: CHIRPS pentads and MODIS composites count only if they end at least 5 days (an assumed latency) before it.
+
+Per district-season, the features are:
+- rainfall per block and season total;
+- NDVI and EVI mean per block, season maximum, and the sum over composites;
+- MODIS valid-pixel fraction per block;
+- an anomaly for each of these vs the mean of the same district and season in strictly previous years (at least 3 years).
+
+Lagged-yield features are the previous same-season yield, the mean of all and of the last 5 same-season yields, a 10-season linear trend value, and the most recent available yield and its age. They also include the previous same-season sown extent and harvested/sown ratio. Every past yield is used only if it would have been published, assuming a 6-month lag after its reference harvest date. Target-season production and extents are never used.
+
+The modelling table covers 2000/01–2025/26 Maha (647 rows) and 2000–2025 Yala (619 rows; Jaffna has no Yala yield): 1,266 rows and 54 features. Earlier yields (1979–1999) are used only to build lags and baselines.
 
 ## 3. Models and hyper-parameters
 _pending (Task 5)_

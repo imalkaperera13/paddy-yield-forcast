@@ -112,3 +112,8 @@ def test_forbidden_columns_listed():
     forb = set(CFG["forbidden_features"])
     assert {"yield_kg_ha", "production_t", "sown_ha", "harvested_ha",
             "mahaweli_merged"} <= forb
+
+
+def test_chirps_column_named_mean_is_accepted():
+    c = synthetic_chirps().rename(columns={"precipitation": "mean"})
+    assert chirps_daily(c).rate.sum() > 0

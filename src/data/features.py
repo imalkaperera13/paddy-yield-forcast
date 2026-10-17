@@ -70,6 +70,8 @@ def chirps_daily(chirps: pd.DataFrame) -> pd.DataFrame:
     """Pentad totals -> daily rate per district (exact block sums for any window).
     Input columns: adm2_pcode, start, end, precipitation (mm per pentad)."""
     c = chirps.copy()
+    if "precipitation" not in c and "mean" in c:   # EE names a single-reducer output 'mean'
+        c = c.rename(columns={"mean": "precipitation"})
     c["start"] = pd.to_datetime(c["start"])
     c["end"] = pd.to_datetime(c["end"])
     c["ndays"] = (c["end"] - c["start"]).dt.days.clip(lower=1)
