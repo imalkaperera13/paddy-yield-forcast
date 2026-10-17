@@ -4,7 +4,17 @@
 
 ## 1. Data
 ### 1.1 Yield labels: DCS Paddy Statistics
-_pending (Task 1): source URL, download date, SHA-256, seasons, season-year convention, Mahaweli handling, dropped rows_
+District-level average yield (kg per net hectare), production, and gross sown and harvested extent for the Maha (1978/79–2025/26) and Yala (1979–2025) seasons. Source: Department of Census and Statistics, Sri Lanka, Paddy Statistics series. The files were downloaded by hand on 2026-10-17; SHA-256 hashes are in `docs/raw_provenance.md`.
+
+Maha seasons are labelled by planting year (Maha 2021/22 → 2021), and the harvest year is stored as well. Time ordering uses a harvest-based index, so each Maha season precedes the following Yala season.
+
+The 25 administrative districts are used as published. The Mahaweli H and Udawalawe irrigation-area rows, reported separately until 2017/18 Maha and 2018 Yala, are excluded.
+
+Three file defects were corrected in code:
+- two mislabelled season headers;
+- a district row-order mismatch in the Maha production series. This was resolved by agreement with yield × harvested area, so production-derived quantities are not independent of yield.
+
+Published yields of 0 kg/ha accompanied by positive production were treated as not reported. Missing district-seasons (101 of 2,375) were dropped, not imputed.
 ### 1.2 District boundaries: HDX COD-AB Sri Lanka
 _pending_
 ### 1.3 Satellite and climate features

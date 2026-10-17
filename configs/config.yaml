@@ -20,18 +20,53 @@ data:
   first_year: 1979
   last_year: 2025
   seasons: [Maha, Yala]
-  season_year_convention: TBD   # Task 1: how Maha 2021/22 is labelled
-  mahaweli_handling: TBD        # Task 1: keep consistent and document
+  season_year_convention: planting_year   # Maha 2021/22 -> season_year 2021, harvest_year 2022
+  time_order_column: season_order          # 2*harvest_year + (0 Maha, 1 Yala); splits use this only
+  mahaweli_handling: as_published_25_districts   # special-area rows excluded; flag is diagnostic only
   impute_missing: false         # hard rule: drop and report, never impute
+  # ASSUMPTION (not verified): a season's DCS yield becomes public this many months after
+  # the season's reference harvest date. A label is usable as a feature only if
+  # harvest_ref(label season) + lag <= forecast date.
+  label_availability_lag_months: 6
+  modelling_first_season: {Maha: 2000, Yala: 2000}  # rows before this: lags/baselines only
+  # Diagnostics only (never a feature). ASSUMPTION from geography, to confirm: Mahaweli
+  # System H lies in Anuradhapura; Udawalawe spans Ratnapura, Monaragala, Hambantota.
+  mahaweli_affected_districts: [ANURADHAPURA, RATNAPURA, MONARAGALA, HAMBANTOTA]
+
+# Columns that must NEVER be model features (enforced by tests/test_features.py).
+# Target-season production/extent leak the answer; mahaweli_merged ~ a time dummy.
+forbidden_features:
+  - yield_kg_ha
+  - production_t
+  - sown_ha
+  - harvested_ha
+  - mahaweli_merged
+  - season_year
+  - harvest_year
+  - season_order
 
 features:
-  # Growth-stage sub-windows, defined once here (Task 2). Placeholder values,
-  # finalised and justified in docs/decisions.md before any extraction.
+  # Growth-stage sub-windows (Task 2). Each season is anchored at a nominal planting date
+  # and split into n_blocks consecutive blocks of window_block_weeks. The reference harvest
+  # date = anchor + n_blocks * block weeks. One pre-season block captures land preparation
+  # and antecedent rain. Justification in docs/decisions.md.
+  season_calendar:
+    Maha: {anchor_month: 10, anchor_day: 15}   # planted Oct-Dec, harvested Feb-Apr
+    Yala: {anchor_month: 4, anchor_day: 15}    # planted Apr-May, harvested Aug-Sep
   window_block_weeks: 4
+  n_blocks: 5                   # 20 weeks ~ 140 days: covers 3.5-4.5 month varieties
+  pre_season_blocks: 1
   window_shift_sensitivity_weeks: [-2, 2]
+  # ASSUMPTION: days after a period ends before its data could be used operationally
+  # (CHIRPS preliminary ~2 days, final ~3 weeks; MODIS MOD13Q1 a few days). We use the
+  # FINAL CHIRPS product in the features, which a real-time system would not have yet.
+  data_latency_days: {chirps: 5, modis: 5}
+  anomaly_min_history_years: 3
+  anomaly_baseline: past_only   # anomalies vs mean of the same district-season in PREVIOUS years
   cropland_mask:
     dataset: ESA/WorldCover/v200
     class_value: 40             # cropland, used as a documented paddy proxy
+    min_fraction: 0.5           # MODIS 250 m pixel counts as cropland if >= 50% of its 10 m cells are class 40
   satellite_start_dates:
     sentinel2: "2017-03-28"
     sentinel1: "2014-10-03"
@@ -39,12 +74,19 @@ features:
     chirps_daily: "1981-01-01"
 
 earth_engine:
+  project: paddy-yield-ee        # Google Cloud project ID (not a secret)
   scale_m:
     modis: 250
     chirps: 5566
     era5_land: 11132
   tile_scale: 4
-  export_to: drive              # one year / one feature at a time
+  # Results are tiny (25 districts x composites), so tables are pulled per year with
+  # getInfo() into data/interim/ee/ (resumable). Export.table.toDrive is the fallback.
+  method: getinfo_per_year
+  modis_first_year: 2000
+  chirps_first_year: 1981       # longer history -> better past-only rain anomalies
+  modis_good_qa_max: 1          # SummaryQA 0 = good, 1 = marginal; 2 snow/ice, 3 cloudy dropped
+  district_simplify_m: 100      # polygon simplification tolerance before sending to EE
 
 validation:
   min_train_years: 10           # first forward-chaining test year chosen so >= this many training years

@@ -9,6 +9,7 @@ shap==0.46.0
 statsmodels==0.14.4
 pyarrow==18.1.0
 pyyaml==6.0.2
+openpyxl==3.1.5      # read DCS .xlsx files
 
 # Geospatial / Earth Engine (heavy exports run on the local Windows machine)
 earthengine-api==1.4.3

@@ -1,0 +1,117 @@
+district,season_label,check,detail
+PUTTALAM,1983/84 Maha,harvested > sown,19763 > 10559
+AMPARA,1987 Yala,harvested > sown,45869 > 45785
+NUWARA ELIYA,1978/79 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1979 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1979/80 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1980 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1980/81 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1981 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1981/82 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+MANNAR,1982 Yala,production / (yield x harvested) outside 0.6-1.1,1.13
+NUWARA ELIYA,1982 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1982/83 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1983 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+MULLAITIVU,1983/84 Maha,production / (yield x harvested) outside 0.6-1.1,0.11
+NUWARA ELIYA,1983/84 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+PUTTALAM,1983/84 Maha,production / (yield x harvested) outside 0.6-1.1,0.42
+NUWARA ELIYA,1984 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1984/85 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+VAVUNIYA,1984/85 Maha,production / (yield x harvested) outside 0.6-1.1,1.56
+NUWARA ELIYA,1985 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1985/86 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1986 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1986/87 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+MANNAR,1987 Yala,production / (yield x harvested) outside 0.6-1.1,1.16
+NUWARA ELIYA,1987 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+VAVUNIYA,1987 Yala,production / (yield x harvested) outside 0.6-1.1,1.15
+NUWARA ELIYA,1987/88 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1988 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1988/89 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+MANNAR,1989 Yala,production / (yield x harvested) outside 0.6-1.1,0.00
+NUWARA ELIYA,1989 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1989/90 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1990 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1990/91 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+MANNAR,1991 Yala,production / (yield x harvested) outside 0.6-1.1,0.00
+NUWARA ELIYA,1991 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1991/92 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1992 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+PUTTALAM,1992 Yala,production / (yield x harvested) outside 0.6-1.1,1.20
+NUWARA ELIYA,1992/93 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1993 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1993/94 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1994 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1994/95 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1995 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1995/96 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1996 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1996/97 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1997 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1997/98 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1998 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1998/99 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,1999 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,1999/00 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2000 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2000/01 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2001 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2001/02 Maha,production / (yield x harvested) outside 0.6-1.1,0.53
+NUWARA ELIYA,2002 Yala,production / (yield x harvested) outside 0.6-1.1,0.58
+NUWARA ELIYA,2002/03 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2003 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2003/04 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2004 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2004/05 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2005 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2005/06 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2006 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2006/07 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2007 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2007/08 Maha,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2008 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2008/09 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2009 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2009/10 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2010 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2010/11 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2011 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2011/12 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2012 Yala,production / (yield x harvested) outside 0.6-1.1,0.57
+NUWARA ELIYA,2012/13 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2013 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2013/14 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2014 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2014/15 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2015 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2015/16 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2016 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2016/17 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2017 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2017/18 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2018 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2018/19 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2019 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2019/20 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2020 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2020/21 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2021 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2021/22 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2022 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2022/23 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2023 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2023/24 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2024 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2024/25 Maha,production / (yield x harvested) outside 0.6-1.1,0.56
+NUWARA ELIYA,2025 Yala,production / (yield x harvested) outside 0.6-1.1,0.56
+COLOMBO,1978/79 Maha,robust outlier (|z|>3.5 within district-season),"yield 2038, z=-3.7"
+POLONNARUWA,1993/94 Maha,robust outlier (|z|>3.5 within district-season),"yield 3023, z=-4.4"
+MULLAITIVU,2009/10 Maha,robust outlier (|z|>3.5 within district-season),"yield 5316, z=5.7"
+NUWARA ELIYA,2012/13 Maha,robust outlier (|z|>3.5 within district-season),"yield 5282, z=3.9"
+KEGALLE,2018/19 Maha,robust outlier (|z|>3.5 within district-season),"yield 4721, z=4.4"
+MULLAITIVU,2018/19 Maha,robust outlier (|z|>3.5 within district-season),"yield 4915, z=4.8"
+GAMPAHA,2019/20 Maha,robust outlier (|z|>3.5 within district-season),"yield 4240, z=3.7"
+KEGALLE,2019/20 Maha,robust outlier (|z|>3.5 within district-season),"yield 4558, z=3.8"
+MULLAITIVU,2019/20 Maha,robust outlier (|z|>3.5 within district-season),"yield 4644, z=4.2"
+RATNAPURA,2019/20 Maha,robust outlier (|z|>3.5 within district-season),"yield 5097, z=3.6"
+POLONNARUWA,2021/22 Maha,robust outlier (|z|>3.5 within district-season),"yield 3103, z=-4.2"
