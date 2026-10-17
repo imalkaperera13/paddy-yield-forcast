@@ -14,17 +14,44 @@ CODE_SLUG = "paddy-yield-code"     # keep in sync with configs/config.yaml -> ka
 DATA_SLUG = "paddy-master-table"   # keep in sync with configs/config.yaml -> kaggle.data_slug
 EXPERIMENT = "02_conformal"
 
-# Kaggle mounts datasets at /kaggle/input/<slug>/ (newer images may nest under datasets/<user>/)
-candidates = list(Path("/kaggle/input").rglob("repo/COMMIT"))
-if not candidates:   # code dataset uploaded with --dir-mode zip and not auto-extracted
-    import zipfile
-    for z in Path("/kaggle/input").rglob("repo.zip"):
+import os
+import zipfile
+
+INPUT = Path("/kaggle/input")
+
+
+def find_all(name: str) -> list[Path]:
+    """os.walk with followlinks: Path.rglob skips symlinked dataset mounts on newer images."""
+    return [Path(r) / name for r, _, files in os.walk(INPUT, followlinks=True) if name in files]
+
+
+def show_input_tree(max_lines: int = 60) -> None:
+    print("contents of /kaggle/input:")
+    n = 0
+    for r, dirs, files in os.walk(INPUT, followlinks=True):
+        depth = Path(r).relative_to(INPUT).parts
+        if len(depth) > 4:
+            dirs[:] = []
+            continue
+        print("  " * len(depth) + (Path(r).name or "/kaggle/input") + "/", files[:6])
+        n += 1
+        if n >= max_lines:
+            print("  ...")
+            return
+
+
+show_input_tree()
+# code dataset: a folder holding COMMIT + src/ (auto-extracted zip), or the zip itself
+candidates = [p for p in find_all("COMMIT") if (p.parent / "src").is_dir()]
+if not candidates:
+    for z in find_all("repo.zip"):
         dest = Path("/kaggle/working/_code")
         zipfile.ZipFile(z).extractall(dest)
-        candidates = list(dest.rglob("COMMIT"))
+        candidates = [Path(r) / "COMMIT" for r, _, f in os.walk(dest) if "COMMIT" in f]
         break
 if not candidates:
-    raise SystemExit("Code dataset not attached: add it to dataset_sources in kernel-metadata.json")
+    raise SystemExit("Code dataset not found under /kaggle/input (see the listing above). "
+                     "Check dataset_sources in kernel-metadata.json and that the dataset is ready.")
 repo = candidates[0].parent
 sys.path.insert(0, str(repo))
 commit = (repo / "COMMIT").read_text().strip()
@@ -34,7 +61,7 @@ from src.kaggle_env import banner, output_dir  # noqa: E402
 
 cfg = load_config(repo / "configs" / "config.yaml")
 set_seed(cfg["project"]["seed"])
-data_dir = next(Path("/kaggle/input").rglob("master_table.parquet")).parent
+data_dir = find_all("master_table.parquet")[0].parent
 info = banner(DATA_SLUG, code_commit=commit, data_dir=data_dir)
 out = output_dir(EXPERIMENT)
 (out / "run_info.json").write_text(__import__("json").dumps(info, indent=2))
