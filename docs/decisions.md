@@ -10,6 +10,20 @@ Every modelling and data choice, with the reason. Newest entries at the bottom o
 - **Raw data** is never committed and never edited. Cleaning happens only in scripts.
 - **No random k-fold** anywhere (`validation.random_kfold_allowed: false`, checked in tests).
 
+## Task 0b — addendum: Kaggle workflow (2026-10-17)
+- **Data sources**: official sources only (DCS, HDX, Earth Engine, NASA POWER, CHIRPS). Kaggle is not a data source. The only things uploaded to Kaggle are our own processed table and our code.
+- **Training on Kaggle** (not Colab). There are two private datasets:
+  - `paddy-master-table`: master table, data dictionary, and `manifest.json` (sha256, build time, git commit).
+  - `paddy-yield-code`: snapshot of `src/` and `configs/`, plus a `COMMIT` file.
+  The code comes in as a dataset rather than a git clone, so kernels need no internet and no stored token.
+- **One kernel per experiment group**: models, conformal, earliness, ablation+SHAP, shock. Defaults are `is_private: true`, `enable_gpu: false`, `enable_internet: false`, and a test enforces them.
+- **Kaggle limits** (checked 2026-10-17, see kaggle/README.md): 12 h session, about 20 GB in `/kaggle/working`, about 30 h/week GPU (not used). Each run is split into resumable units, one per fold or seed.
+- **Library versions on Kaggle** are the image defaults, since installs need internet. Each kernel logs them to `run_info.json`, and the report quotes those versions.
+- **Dataset and kernel versions used for reported results**: _recorded here after each upload_
+
+| date | dataset | version | git commit | note |
+|---|---|---|---|---|
+
 ## Task 1 — DCS yields (pending)
 - Season-year convention (how Maha 2021/22 is labelled): _TBD_
 - Mahaweli / non-Mahaweli handling: _TBD_

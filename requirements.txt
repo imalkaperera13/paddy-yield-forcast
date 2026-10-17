@@ -15,6 +15,7 @@ earthengine-api==1.4.3
 geemap==0.35.1
 geopandas==1.0.1
 rasterio==1.4.3
+shapely==2.0.6
 
 # Tracking, plotting, testing
 mlflow==2.19.0
@@ -22,6 +23,9 @@ matplotlib==3.9.4
 seaborn==0.13.2
 pytest==8.3.4
 ruff==0.8.4
+
+# Kaggle CLI: version pinned from your pip freeze after the first install
+kaggle
 
 # Optional (install only when needed)
 # mapie==0.9.1

@@ -9,7 +9,7 @@ data/processed/*
 .env.*
 *.key
 *.pem
-credentials*.json
+credentials*
 *service-account*.json
 .config/earthengine/
 
@@ -39,3 +39,12 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+
+# --- Kaggle: token and build outputs never committed ---
+kaggle.json
+access_token
+.kaggle/
+kaggle/_build/
+results/runs/
+setup_log.txt
+requirements-freeze.txt

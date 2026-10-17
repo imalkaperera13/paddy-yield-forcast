@@ -14,7 +14,8 @@ python -m pytest              # tests
 python -m src.run_all         # full pipeline (stages are added task by task)
 ```
 
-On Kaggle, run `pip install -r requirements.txt` in the notebook and upload the processed master table as a **private** dataset.
+Training runs on Kaggle. The master table and the code are uploaded as two **private** datasets, and there is one kernel per experiment group. See `kaggle/README.md`.
+Report-ready write-ups go in `results/EXPLAINED.md` and `results/METHODS_FOR_REPORT.md`.
 
 ## Layout
 
@@ -25,6 +26,8 @@ src/data                   DCS cleaning, Earth Engine extraction, master table
 src/validation             leakage-safe splitters (forward-chaining, leave-district-out)
 src/models                 baselines, ridge, RF, LightGBM, XGBoost, hybrid
 src/analysis               statistics, conformal, earliness, ablation, SHAP, shock tests
+kaggle/kernels/            thin Kaggle kernels (one per experiment group)
+scripts/                   env_check.py, kaggle_prepare.py
 tests/                     pytest, including the leakage tests
 results/{tables,figures}   real outputs only, figures at 300 dpi
 docs/                      decisions.md, data_dictionary.md
@@ -40,6 +43,6 @@ docs/                      decisions.md, data_dictionary.md
 
 | task | status |
 |---|---|
-| 0 environment and scaffold | done |
+| 0 environment and scaffold | done (+ Kaggle workflow, see `kaggle/README.md`) |
 | 1 DCS yield table | waiting for raw data |
 | 2–11 | not started |

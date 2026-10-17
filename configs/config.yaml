@@ -59,3 +59,13 @@ earliness:
 
 figures:
   dpi: 300
+
+kaggle:
+  username: TBD                 # your Kaggle username (not secret); token stays in ~/.kaggle only
+  data_slug: paddy-master-table
+  data_title: Paddy master table
+  code_slug: paddy-yield-code
+  code_title: Paddy yield source code
+  internet: false               # kernels need no internet: code arrives as a private dataset
+  gpu: false                    # tree models are CPU; GPU only if an LSTM is requested
+  max_session_hours: 12         # design runs to finish well inside this and to resume
