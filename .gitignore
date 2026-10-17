@@ -1,0 +1,41 @@
+# --- Data: never commit raw or derived data (hard rule 4) ---
+data/raw/*
+data/interim/*
+data/processed/*
+!data/*/.gitkeep
+
+# --- Secrets ---
+.env
+.env.*
+*.key
+*.pem
+credentials*.json
+*service-account*.json
+.config/earthengine/
+
+# --- Experiment tracking / large outputs ---
+mlruns/
+mlartifacts/
+models/*.joblib
+models/*.pkl
+*.parquet
+*.tif
+*.tiff
+*.nc
+*.zip
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.ipynb_checkpoints/
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

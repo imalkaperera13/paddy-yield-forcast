@@ -1,0 +1,28 @@
+# Target: Python 3.11. Versions pinned for reproducibility (hard rule 5).
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.13.1
+scikit-learn==1.5.2
+lightgbm==4.5.0
+xgboost==2.1.3
+shap==0.46.0
+statsmodels==0.14.4
+pyarrow==18.1.0
+pyyaml==6.0.2
+
+# Geospatial / Earth Engine (heavy exports run on the local Windows machine)
+earthengine-api==1.4.3
+geemap==0.35.1
+geopandas==1.0.1
+rasterio==1.4.3
+
+# Tracking, plotting, testing
+mlflow==2.19.0
+matplotlib==3.9.4
+seaborn==0.13.2
+pytest==8.3.4
+ruff==0.8.4
+
+# Optional (install only when needed)
+# mapie==0.9.1
+# torch (CPU only, only if an LSTM is requested)

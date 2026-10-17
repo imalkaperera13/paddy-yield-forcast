@@ -1,0 +1,61 @@
+# Single source of truth for all project settings.
+# Anything marked TBD is decided in the named task and recorded in docs/decisions.md.
+
+project:
+  name: paddy-yield-forecast
+  seed: 42
+  seeds_for_spread: [42, 7, 123, 2024, 31337]   # metrics reported as mean +/- spread over these
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  master_table: data/processed/master_table.parquet
+  tables: results/tables
+  figures: results/figures
+  models: models
+  mlflow_tracking_uri: file:./mlruns
+
+data:
+  first_year: 1979
+  last_year: 2025
+  seasons: [Maha, Yala]
+  season_year_convention: TBD   # Task 1: how Maha 2021/22 is labelled
+  mahaweli_handling: TBD        # Task 1: keep consistent and document
+  impute_missing: false         # hard rule: drop and report, never impute
+
+features:
+  # Growth-stage sub-windows, defined once here (Task 2). Placeholder values,
+  # finalised and justified in docs/decisions.md before any extraction.
+  window_block_weeks: 4
+  window_shift_sensitivity_weeks: [-2, 2]
+  cropland_mask:
+    dataset: ESA/WorldCover/v200
+    class_value: 40             # cropland, used as a documented paddy proxy
+  satellite_start_dates:
+    sentinel2: "2017-03-28"
+    sentinel1: "2014-10-03"
+    modis_mod13q1: "2000-02-18"
+    chirps_daily: "1981-01-01"
+
+earth_engine:
+  scale_m:
+    modis: 250
+    chirps: 5566
+    era5_land: 11132
+  tile_scale: 4
+  export_to: drive              # one year / one feature at a time
+
+validation:
+  min_train_years: 10           # first forward-chaining test year chosen so >= this many training years
+  calibration_years: 3          # most recent years inside the training window
+  random_kfold_allowed: false
+
+conformal:
+  alpha: 0.1                    # target 90% coverage
+
+earliness:
+  lead_weeks_before_harvest: [12, 10, 8, 6, 4, 2, 0]
+
+figures:
+  dpi: 300
