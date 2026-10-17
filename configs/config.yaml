@@ -60,7 +60,8 @@ features:
   # ASSUMPTION: days after a period ends before its data could be used operationally
   # (CHIRPS preliminary ~2 days, final ~3 weeks; MODIS MOD13Q1 a few days). We use the
   # FINAL CHIRPS product in the features, which a real-time system would not have yet.
-  data_latency_days: {chirps: 5, modis: 5}
+  data_latency_days: {chirps: 5, modis: 5, era5: 7}   # ERA5T ~5 days behind real time
+  heat_day_tmax_c: 35           # day counts as heat stress if daily max 2 m temperature >= this
   anomaly_min_history_years: 3
   anomaly_baseline: past_only   # anomalies vs mean of the same district-season in PREVIOUS years
   cropland_mask:
@@ -85,6 +86,7 @@ earth_engine:
   method: getinfo_per_year
   modis_first_year: 2000
   chirps_first_year: 1981       # longer history -> better past-only rain anomalies
+  era5_first_year: 1991         # ~10 years of history before the first modelling season
   modis_good_qa_max: 1          # SummaryQA 0 = good, 1 = marginal; 2 snow/ice, 3 cloudy dropped
   district_simplify_m: 100      # polygon simplification tolerance before sending to EE
 

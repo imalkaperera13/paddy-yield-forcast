@@ -21,7 +21,13 @@ import numpy as np
 import pandas as pd
 
 from src.config import REPO_ROOT, load_config
-from src.data.features import Calendar, build_season_features, chirps_daily, modis_clean
+from src.data.features import (
+    Calendar,
+    build_season_features,
+    chirps_daily,
+    era5_daily,
+    modis_clean,
+)
 
 EE = REPO_ROOT / "data" / "interim" / "ee"
 PROC = REPO_ROOT / "data" / "processed"
@@ -30,6 +36,7 @@ GROUPS = {
     "lagged_yield": ("y_", "sown_prev_same", "harv_ratio_prev_same", "n_label_hist_same"),
     "rainfall": ("rain_",),
     "modis": ("ndvi_", "evi_", "modis_valid_"),
+    "temp_radiation": ("tmean_", "tmax_", "tmin_", "vpd_", "srad_", "evap_", "heat_days"),
 }
 
 
@@ -65,6 +72,8 @@ def main(lead: int, shift: int) -> None:
     pcodes = labels.drop_duplicates("district")[["district", "adm2_pcode"]]
 
     chirps_raw, modis_raw = load_series("chirps_*.csv"), load_series("modis_*.csv")
+    era5_raw = load_series("era5_*.csv")
+    era5 = era5_daily(era5_raw) if era5_raw is not None else None
     sp = EE / "static_cropland.csv"
     static = pd.read_csv(sp) if sp.exists() else None
     if chirps_raw is None and modis_raw is None:
@@ -77,7 +86,8 @@ def main(lead: int, shift: int) -> None:
     grid = pd.DataFrame([(d, p, s, y) for d, p in pcodes.itertuples(index=False)
                          for s in ("Maha", "Yala") for y in range(first_year, last_year + 1)],
                         columns=["district", "adm2_pcode", "season", "season_year"])
-    feats = build_season_features(grid, labels, rain, modis, cal, lead, shift)
+    feats = build_season_features(grid, labels, rain, modis, cal, lead, shift, era5=era5,
+                                  heat_thr=cfg["features"]["heat_day_tmax_c"])
 
     first = cfg["data"]["modelling_first_season"]
     keep = ["district", "adm2_pcode", "season", "season_label", "season_year", "harvest_year",
@@ -112,6 +122,8 @@ def main(lead: int, shift: int) -> None:
         rain.to_parquet(PROC / "series_rain_daily.parquet", index=False)
     if modis is not None:
         modis.to_parquet(PROC / "series_modis.parquet", index=False)
+    if era5 is not None:
+        era5.to_parquet(PROC / "series_era5_daily.parquet", index=False)
     write_data_card(m, groups, labels, first, cfg)
 
 

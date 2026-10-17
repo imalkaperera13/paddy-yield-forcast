@@ -99,3 +99,9 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - **Hyper-parameter tuning.** Inner expanding-window splits over the last 3 harvest years of each training window (`inner_time_splits`); test seasons are never used.
 - **Random k-fold** raises an error in the main code. It is used only in the documented demonstration of why it inflates scores.
 - Fold list: `results/tables/validation_folds_lead0.csv`.
+
+## Task 2b — ERA5-Land (2026-10-17)
+- `ECMWF/ERA5_LAND/DAILY_AGGR`, 1991–2026, district means at 11,132 m. It is pulled per quarter because a year has 25 × 365 rows, more than the 5,000-row limit per request. 37 yearly files, no failures.
+- Only total evaporation is used, sign-flipped. The component evaporation bands are mislabelled in the source (EE catalog note).
+- ASSUMPTION: 7-day data latency (ERA5T is ~5 days behind real time). Heat-stress day = daily max ≥ 35 °C (config).
+- Result: the master table has 120 features. Because 120 features is about a tenth of the 1,266 rows, regularised and tree models are preferred, and the feature-group ablation (Task 9) will show whether this group helps.

@@ -16,6 +16,7 @@ Built by `src/data/build_master.py` (lead 0, nominal windows). Target: `yield_kg
 | lagged_yield | 9 | 99.8 | 99.4 |
 | rainfall | 14 | 100.0 | 100.0 |
 | modis | 31 | 99.9 | 99.7 |
+| temp_radiation | 66 | 100.0 | 100.0 |
 
 Anomalies are relative to the same district-season in PREVIOUS years only (at least 3 years). Yield lags respect the assumed 6-month publication lag.
 

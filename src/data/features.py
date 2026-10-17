@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 
 MODIS_PERIOD_DAYS = 16
+CLIMATE_PREFIXES = ("rain_", "ndvi_", "evi_", "tmean_", "tmax_", "tmin_", "vpd_", "srad_",
+                    "evap_", "heat_days")
 
 
 @dataclass(frozen=True)
@@ -82,6 +84,26 @@ def chirps_daily(chirps: pd.DataFrame) -> pd.DataFrame:
     return rows[["adm2_pcode", "date", "pentad_end", "rate"]].reset_index(drop=True)
 
 
+def era5_daily(era5: pd.DataFrame) -> pd.DataFrame:
+    """ERA5-Land daily district means -> physical units. VPD from Tetens (kPa)."""
+    e = era5.copy()
+    e["date"] = pd.to_datetime(e["date"])
+    k = 273.15
+    e["tmean_c"] = e["temperature_2m"] - k
+    e["tmax_c"] = e["temperature_2m_max"] - k
+    e["tmin_c"] = e["temperature_2m_min"] - k
+    td = e["dewpoint_temperature_2m"] - k
+
+    def es(t):
+        return 0.6108 * np.exp(17.27 * t / (t + 237.3))
+
+    e["vpd_kpa"] = (es(e["tmean_c"]) - es(td)).clip(lower=0)
+    e["srad_mj"] = e["surface_solar_radiation_downwards_sum"] / 1e6
+    e["evap_mm"] = -e["total_evaporation_sum"] * 1000      # ECMWF: evaporation is negative
+    return e[["adm2_pcode", "date", "tmean_c", "tmax_c", "tmin_c", "vpd_kpa", "srad_mj",
+              "evap_mm"]]
+
+
 def modis_clean(modis: pd.DataFrame, static: pd.DataFrame | None) -> pd.DataFrame:
     m = modis.copy()
     m["date"] = pd.to_datetime(m["date"])
@@ -107,6 +129,30 @@ def rain_features(rain: pd.DataFrame, pcode: str, season: str, sy: int, cal: Cal
             total += val
             seen = True
     out["rain_season"] = total if seen else np.nan
+    return out
+
+
+def era5_features(era5: pd.DataFrame, season: str, sy: int, cal: Calendar,
+                  fdate: pd.Timestamp, shift: int, heat_thr: float) -> dict:
+    """era5: this district's daily rows. A day counts once date + 1 + latency <= forecast date."""
+    lat = pd.Timedelta(days=cal.latency_days.get("era5", 0) + 1)
+    e = era5[era5.date + lat <= fdate]
+    out = {}
+    growth = [b for b in cal.blocks(season, sy, shift) if b[0].startswith("b")]
+    for name, s, en in growth:
+        x = e[(e.date >= s) & (e.date < en)]
+        has = len(x) > 0
+        out[f"tmean_{name}"] = float(x.tmean_c.mean()) if has else np.nan
+        out[f"tmax_{name}"] = float(x.tmax_c.mean()) if has else np.nan
+        out[f"tmin_{name}"] = float(x.tmin_c.mean()) if has else np.nan
+        out[f"vpd_{name}"] = float(x.vpd_kpa.mean()) if has else np.nan
+        out[f"srad_{name}"] = float(x.srad_mj.sum()) if has else np.nan
+        out[f"evap_{name}"] = float(x.evap_mm.sum()) if has else np.nan
+    x = e[(e.date >= growth[0][1]) & (e.date < growth[-1][2])]
+    has = len(x) > 0
+    out["tmean_season"] = float(x.tmean_c.mean()) if has else np.nan
+    out["srad_season"] = float(x.srad_mj.sum()) if has else np.nan
+    out["heat_days_season"] = float((x.tmax_c >= heat_thr).sum()) if has else np.nan
     return out
 
 
@@ -177,12 +223,14 @@ def add_past_anomalies(df: pd.DataFrame, cols: list[str], min_history: int = 3) 
 
 def build_season_features(targets: pd.DataFrame, labels: pd.DataFrame, rain: pd.DataFrame | None,
                           modis: pd.DataFrame | None, cal: Calendar, lead_weeks: int = 0,
-                          shift_weeks: int = 0) -> pd.DataFrame:
+                          shift_weeks: int = 0, era5: pd.DataFrame | None = None,
+                          heat_thr: float = 35.0) -> pd.DataFrame:
     """targets: rows (district, adm2_pcode, season, season_year). Pass the FULL grid of
     seasons with climate data (not only rows with yields) so past-only anomalies have history;
     filter to modelling rows afterwards."""
     rain_by = dict(tuple(rain.groupby("adm2_pcode"))) if rain is not None else {}
     modis_by = dict(tuple(modis.groupby("adm2_pcode"))) if modis is not None else {}
+    era5_by = dict(tuple(era5.groupby("adm2_pcode"))) if era5 is not None else {}
     labels_by = dict(tuple(labels.groupby("district")))
     empty_labels = labels.iloc[0:0]
     recs = []
@@ -198,7 +246,10 @@ def build_season_features(targets: pd.DataFrame, labels: pd.DataFrame, rain: pd.
         if modis is not None and r.adm2_pcode in modis_by:
             rec.update(modis_features(modis_by[r.adm2_pcode], r.adm2_pcode, r.season,
                                       r.season_year, cal, fdate, shift_weeks))
+        if era5 is not None and r.adm2_pcode in era5_by:
+            rec.update(era5_features(era5_by[r.adm2_pcode], r.season, r.season_year, cal, fdate,
+                                     shift_weeks, heat_thr))
         recs.append(rec)
     out = pd.DataFrame(recs)
-    climate = [c for c in out.columns if c.startswith(("rain_", "ndvi_", "evi_"))]
+    climate = [c for c in out.columns if c.startswith(CLIMATE_PREFIXES)]
     return add_past_anomalies(out, climate)

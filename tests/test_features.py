@@ -117,3 +117,36 @@ def test_forbidden_columns_listed():
 def test_chirps_column_named_mean_is_accepted():
     c = synthetic_chirps().rename(columns={"precipitation": "mean"})
     assert chirps_daily(c).rate.sum() > 0
+
+
+def synthetic_era5(pcode="LK00", start="1999-01-01", end="2003-12-31"):
+    """SYNTHETIC ERA5-Land-like daily rows (Kelvin, J/m2, m)."""
+    d = pd.date_range(start, end, freq="D")
+    return pd.DataFrame({"adm2_pcode": pcode, "date": d.strftime("%Y-%m-%d"),
+                         "temperature_2m": 300.15, "temperature_2m_max": 306.15,
+                         "temperature_2m_min": 296.15, "dewpoint_temperature_2m": 295.15,
+                         "surface_solar_radiation_downwards_sum": 20e6,
+                         "total_evaporation_sum": -0.004})
+
+
+def test_SYNTHETIC_era5_units_and_no_future_leak():
+    from src.data.features import era5_daily
+    e = era5_daily(synthetic_era5())
+    assert np.isclose(e.tmean_c.iloc[0], 27.0) and np.isclose(e.srad_mj.iloc[0], 20.0)
+    assert np.isclose(e.evap_mm.iloc[0], 4.0) and e.vpd_kpa.iloc[0] > 0
+
+    def feats(raw, lead):
+        return build_season_features(TARGET, labels_synthetic(), None, None, CAL, lead, 0,
+                                     era5=era5_daily(raw), heat_thr=35.0).iloc[0]
+
+    base = synthetic_era5()
+    f0 = feats(base, 6)
+    fdate = CAL.forecast_date("Maha", 2001, 6)
+    late = pd.to_datetime(base.date) + pd.Timedelta(days=CAL.latency_days["era5"] + 1) > fdate
+    hot = base.copy()
+    hot.loc[late, "temperature_2m_max"] = 330.0
+    hot.loc[late, "surface_solar_radiation_downwards_sum"] = 99e6
+    f1 = feats(hot, 6)
+    cols = [c for c in f0.index if c.startswith(("tmax_", "srad_", "heat_days"))]
+    pd.testing.assert_series_equal(f0[cols].astype(float), f1[cols].astype(float))
+    assert f0["heat_days_season"] == 0          # 33 C max < 35 C threshold

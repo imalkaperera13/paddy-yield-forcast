@@ -37,6 +37,12 @@ OUT = REPO_ROOT / "data" / "interim" / "ee"
 LOG = OUT / "extract_log.txt"
 MODIS_ID = "MODIS/061/MOD13Q1"
 CHIRPS_ID = "UCSB-CHG/CHIRPS/PENTAD"
+ERA5_ID = "ECMWF/ERA5_LAND/DAILY_AGGR"
+# Only total evaporation is used: the component evaporation bands are mislabelled in the
+# source (known ECMWF issue noted in the EE catalog).
+ERA5_BANDS = ["temperature_2m", "temperature_2m_max", "temperature_2m_min",
+              "dewpoint_temperature_2m", "surface_solar_radiation_downwards_sum",
+              "total_evaporation_sum"]
 WORLDCOVER_ID = "ESA/WorldCover/v200"
 
 
@@ -174,6 +180,25 @@ def extract_chirps_year(ee, fc, cfg, year: int) -> pd.DataFrame:
     return pd.DataFrame([r["properties"] for r in rows["features"]])
 
 
+def extract_era5_year(ee, fc, cfg, year: int) -> pd.DataFrame:
+    """Daily district means. Pulled per quarter (25 districts x ~92 days < 5000 rows/call)."""
+    parts = []
+    for q0, q1 in (("01-01", "04-01"), ("04-01", "07-01"), ("07-01", "10-01"), ("10-01", None)):
+        end = f"{year}-{q1}" if q1 else f"{year + 1}-01-01"
+        col = ee.ImageCollection(ERA5_ID).filterDate(f"{year}-{q0}", end).select(ERA5_BANDS)
+
+        def per_image(img):
+            date = img.date().format("YYYY-MM-dd")
+            stats = img.reduceRegions(collection=fc, reducer=ee.Reducer.mean(),
+                                      scale=cfg["earth_engine"]["scale_m"]["era5_land"],
+                                      tileScale=cfg["earth_engine"]["tile_scale"])
+            return stats.map(lambda f: ee.Feature(None, f.toDictionary()).set("date", date))
+
+        rows = get_with_retry(col.map(per_image).flatten(), f"era5 {year} {q0}")
+        parts.append(pd.DataFrame([r["properties"] for r in rows["features"]]))
+    return pd.concat(parts, ignore_index=True)
+
+
 def run(what: str, years: list[int] | None) -> None:
     cfg = load_config()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -183,7 +208,8 @@ def run(what: str, years: list[int] | None) -> None:
     fc = to_fc(ee, gdf)
     this_year = dt.date.today().year
     meta = {"extracted_utc": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
-            "datasets": {"modis": MODIS_ID, "chirps": CHIRPS_ID, "worldcover": WORLDCOVER_ID},
+            "datasets": {"modis": MODIS_ID, "chirps": CHIRPS_ID, "era5_land": ERA5_ID,
+                         "worldcover": WORLDCOVER_ID},
             "ee_project": cfg["earth_engine"]["project"], "ee_api": ee.__version__}
     (OUT / "extract_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     if what in ("all", "static"):
@@ -195,6 +221,9 @@ def run(what: str, years: list[int] | None) -> None:
     if what in ("all", "chirps"):
         ys = years or range(cfg["earth_engine"]["chirps_first_year"], this_year + 1)
         jobs += [("chirps", y, extract_chirps_year) for y in ys]
+    if what in ("all", "era5"):
+        ys = years or range(cfg["earth_engine"]["era5_first_year"], this_year + 1)
+        jobs += [("era5", y, extract_era5_year) for y in ys]
     failed = []
     for name, y, fn in jobs:
         out = OUT / f"{name}_{y}.csv"
@@ -214,7 +243,7 @@ def run(what: str, years: list[int] | None) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--what", default="all", choices=["all", "static", "modis", "chirps"])
+    ap.add_argument("--what", default="all", choices=["all", "static", "modis", "chirps", "era5"])
     ap.add_argument("--years", help="e.g. 2000-2002 or 2005")
     a = ap.parse_args()
     yrs = None

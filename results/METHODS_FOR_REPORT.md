@@ -21,6 +21,7 @@ Administrative level-2 (district) polygons, COD-AB v03 (valid from 2022-08-16), 
 ### 1.3 Satellite and climate data (Google Earth Engine, extracted 2026-10-17, earthengine-api 1.4.3)
 - **MODIS MOD13Q1 v061** (`MODIS/061/MOD13Q1`): 16-day 250 m NDVI and EVI, 2000-02-18 to 2026-09-14, scaled by 0.0001. Only pixels with SummaryQA ≤ 1 (good or marginal) are kept. District values are means over cropland pixels, with the valid-pixel count recorded. 15,300 district-composites; 30 had no valid pixels.
 - **CHIRPS v2.0 pentad** (`UCSB-CHG/CHIRPS/PENTAD`): ~5.5 km rainfall, 1981-01-01 to 2026-10-01, as district means (no cropland weighting). 82,350 district-pentads.
+- **ERA5-Land daily aggregates** (`ECMWF/ERA5_LAND/DAILY_AGGR`): ~11 km, 1991-01-01 to 2026, as district means. The bands used are 2 m mean, maximum and minimum temperature; dewpoint; total incoming solar radiation; and total evaporation (sign flipped; the component evaporation bands are mislabelled in the source, so they are not used). Vapour-pressure deficit is computed from mean temperature and dewpoint using the Tetens formula.
 - **Cropland mask:** ESA WorldCover v200 (2021) class 40 ("cropland"), aggregated to the MODIS grid. A 250 m pixel is treated as cropland if ≥ 50% of its 10 m cells are class 40. WorldCover has no paddy class, so this is a proxy. Its area is 0.85× the DCS Maha sown extent nationally, but only 0.10–0.47× in wet-zone districts.
 
 ## 2. Features
@@ -30,11 +31,12 @@ Per district-season, the features are:
 - rainfall per block and season total;
 - NDVI and EVI mean per block, season maximum, and the sum over composites;
 - MODIS valid-pixel fraction per block;
+- temperature (mean, max, min), vapour-pressure deficit, solar radiation and evaporation per block; season mean temperature, total radiation, and heat-stress days (daily max ≥ 35 °C). ERA5 days count only if they end at least 7 days (an assumed latency) before the forecast date;
 - an anomaly for each of these vs the mean of the same district and season in strictly previous years (at least 3 years).
 
 Lagged-yield features are the previous same-season yield, the mean of all and of the last 5 same-season yields, a 10-season linear trend value, and the most recent available yield and its age. They also include the previous same-season sown extent and harvested/sown ratio. Every past yield is used only if it would have been published, assuming a 6-month lag after its reference harvest date. Target-season production and extents are never used.
 
-The modelling table covers 2000/01–2025/26 Maha (647 rows) and 2000–2025 Yala (619 rows; Jaffna has no Yala yield): 1,266 rows and 54 features. Earlier yields (1979–1999) are used only to build lags and baselines.
+The modelling table covers 2000/01–2025/26 Maha (647 rows) and 2000–2025 Yala (619 rows; Jaffna has no Yala yield): 1,266 rows and 120 features (lagged yield 9, rainfall 14, MODIS 31, temperature/radiation 66). Earlier yields (1979–1999) are used only to build lags and baselines.
 
 ## 3. Models and hyper-parameters
 _pending (Task 5)_
