@@ -90,3 +90,12 @@ The 5-day latencies are ASSUMPTIONS (`features.data_latency_days`). The features
 - yield lags: previous same season, mean of all available same-season yields, last-5 mean (the baseline), 10-season linear trend, and last available label plus its age. These are all filtered by the 6-month lag rule. The previous same-season sown extent and harvested/sown ratio are also included.
 
 **Shock candidates from the data** (national area-weighted anomaly vs the previous 10 same seasons): 2021/22 Maha −35.4%, 2022 Yala −23.4%, 2022/23 Maha −11.8% (the fertiliser-ban period, a policy shock), and 2010/11 Maha −8.3% (the floods). Drought and flood shock seasons for Task 10 will be selected excluding the ban seasons.
+
+## Task D — validation (2026-10-17)
+Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a SYNTHETIC grid and on the real master table at leads 0, 6 and 12 weeks.
+- **(a) Forward-chaining by season.** Each fold tests ONE season (all districts). Training rows are those whose label would have been published by that season's forecast date (reference harvest + 6-month assumed lag), and they must be earlier in `season_order`. **First test season: 2009/10 Maha**, the first season whose available training labels span ≥ 10 harvest years (2000–2009). This gives 33 folds (2009/10 Maha to 2025/26 Maha) and 808 test district-seasons. Ten years is the brief's minimum. Starting earlier would leave the first models with too few seasons; starting later would waste test seasons.
+- **(b) Leave-district-out.** The same folds, with the test district removed from training entirely, so the test measures generalisation to an unseen district while still respecting time. 808 folds.
+- **(c) Calibration split** (for split conformal). Inside each training window, the most recent 3 harvest years are the calibration set and the rest is the proper training set.
+- **Hyper-parameter tuning.** Inner expanding-window splits over the last 3 harvest years of each training window (`inner_time_splits`); test seasons are never used.
+- **Random k-fold** raises an error in the main code. It is used only in the documented demonstration of why it inflates scores.
+- Fold list: `results/tables/validation_folds_lead0.csv`.
