@@ -1,0 +1,19 @@
+| variant | vs | n_pairs | p_value | rank_biserial_r | median_abs_err_gain_kg_ha | p_holm |
+|---|---|---|---|---|---|---|
+| all | baseline | 808 | 0.2205 | 0.04975 | 11.33 | 1 |
+| all_minus_modis | baseline | 808 | 0.5946 | 0.02161 | 5.327 | 1 |
+| all_minus_modis | all | 808 | 0.002444 | -0.1231 | -5.275 | 0.03667 |
+| all_minus_rainfall | baseline | 808 | 0.2188 | 0.04994 | 8.275 | 1 |
+| all_minus_rainfall | all | 808 | 0.1064 | -0.06557 | -2.341 | 1 |
+| all_minus_temp_radiation | baseline | 808 | 0.0459 | 0.08107 | 12.92 | 0.5508 |
+| all_minus_temp_radiation | all | 808 | 0.151 | 0.05832 | 3.834 | 1 |
+| lagged_yield+modis | baseline | 808 | 0.0187 | 0.09549 | 15.16 | 0.2474 |
+| lagged_yield+modis | all | 808 | 0.117 | 0.06366 | 2.372 | 1 |
+| lagged_yield+rainfall | baseline | 808 | 0.5269 | 0.02569 | 5.024 | 1 |
+| lagged_yield+rainfall | all | 808 | 0.2794 | -0.04392 | -5.035 | 1 |
+| lagged_yield+temp_radiation | baseline | 808 | 0.458 | 0.03014 | 7.723 | 1 |
+| lagged_yield+temp_radiation | all | 808 | 0.01767 | -0.09634 | -3.443 | 0.2474 |
+| lagged_yield_only | baseline | 808 | 0.146 | 0.05904 | 6.192 | 1 |
+| lagged_yield_only | all | 808 | 0.8661 | -0.006847 | -2.751 | 1 |
+| no_lagged_yield | baseline | 808 | 1.099e-10 | -0.262 | -68.81 | 1.759e-09 |
+| no_lagged_yield | all | 808 | 6.016e-14 | -0.3049 | -73.52 | 1.023e-12 |

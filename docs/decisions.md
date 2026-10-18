@@ -105,3 +105,50 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - Only total evaporation is used, sign-flipped. The component evaporation bands are mislabelled in the source (EE catalog note).
 - ASSUMPTION: 7-day data latency (ERA5T is ~5 days behind real time). Heat-stress day = daily max ≥ 35 °C (config).
 - Result: the master table has 120 features. Because 120 features is about a tenth of the 1,266 rows, regularised and tree models are preferred, and the feature-group ablation (Task 9) will show whether this group helps.
+
+## Task E1 — kernel 01 models run (2026-10-17)
+- **Kernel** `imalkaperera/paddy-01-baselines-and-models` v2 (CPU, internet off), 10,751 s. Inputs: `paddy-master-table` v1 (master SHA-256 `2a8fdc80…`) and `paddy-yield-code` v1 (COMMIT `3a1d358`). The kernel wrapper came from the next commit; it differs only in how it finds the datasets.
+- **v1 failed** after 10 s: the code dataset's zip is auto-extracted *without* the `repo/` folder, so the `repo/COMMIT` search failed. Fixed by finding `COMMIT` next to `src/` with `os.walk(followlinks=True)` and printing `/kaggle/input` at start.
+- **Library versions differ from `requirements.txt`.** Kaggle's image provides sklearn 1.6.1, lightgbm 4.6.0, xgboost 3.4.1, numpy 2.1.3, pandas 2.3.3 and Python 3.13.15; the run used these, not the pinned versions. The exact versions are recorded in `results/runs_meta/01_models/run_info.json`. MLflow is not installed on the image, so tracking fell back to `runs_log.jsonl` (by design).
+- **Result:** no model beats the last-5 baseline at lead 0 (Wilcoxon, Holm). The hybrid is significantly worse. Random 5-fold inflates R² from 0.47 to 0.71. Details: `results/RESULTS.md`.
+- **Decision:** keep the baseline as the reference. The next steps test where models *could* add value: earliness (is there signal before harvest?), shock seasons, feature-group ablation, and conformal intervals around the baseline and the random forest.
+
+## Tasks E2–E5 — follow-up experiments (2026-10-18)
+- **Scope, to keep compute bounded:** kernels 02–04 use the baseline, ridge and random forest (the best model in kernel 01), with one seed (42; `followup_seed`). Kernel 01 showed the seed spread is small (RF RMSE std 2.9 kg/ha).
+- **E2 conformal (kernel 02):** split conformal. Per fold, calibration = the last 3 harvest years of the training window; the model is tuned and fitted on the older years only. q = the ceil((n+1)(1−α))-th smallest calibration |residual|. Two variants: standard, and Mondrian by season (separate q for Maha/Yala). Reliability at α ∈ {0.5, 0.4, 0.3, 0.2, 0.1, 0.05}. Point accuracy here is lower than kernel 01's because the models see 3 fewer years; this is reported separately.
+- **E3 earliness + window shift (kernel 03):** feature tables for leads 2–12 and shifts ±2 weeks were built with `python -m src.data.build_master --lead L` / `--shift S`. They were built in the Claude workspace from the same interim inputs: the lead-0 rebuild reproduces `master_table.parquet` exactly (SHA-256 `2a8fdc80…`). They are uploaded flat in `paddy-master-table` v2 (per-file SHA-256 in `manifest.json`). Each lead uses its own folds (labels published by that forecast date), and all leads are compared on the same rows.
+- **E4 ablation + SHAP (kernel 04):** RF on 9 feature sets (all; lagged only; lagged + each group; all minus each group; no lagged). Paired Wilcoxon vs the baseline and vs 'all', Holm-adjusted. SHAP: TreeExplainer on each fold's own model (refitted with that fold's chosen parameters) and that fold's test rows only.
+- **E5 shocks:** no training is needed, so the analysis runs locally from saved predictions (`src/analysis/shocks.py`); kernel 05 is not used. Shock seasons: named in advance (Maha 2021, Yala 2022, Maha 2022 policy/economic; Maha 2010 floods), plus the 3 largest other negative national anomalies from the data (Maha 2023, Maha 2024, Yala 2023; cause unverified).
+
+## Task E2 — kernel 02 run (2026-10-18)
+- Kernel `imalkaperera/paddy-02-conformal` v1, CPU, internet off. Inputs: `paddy-master-table` v2 and `paddy-yield-code` v2 (COMMIT `cd8d7da`). The run log ends with "experiment 02 complete". Outputs are in `results/tables/conformal_*`, `predictions_conformal.csv` and `results/figures/conformal_*.png`; run metadata is in `results/runs_meta/02_conformal/`.
+- Result summary in `results/RESULTS.md` §8. The shock-split coverage (90–92% outside, 56–60% inside the 4 named shock seasons) was computed locally from `predictions_conformal.csv`. The shock seasons are the ones fixed in `configs/config.yaml` before any interval was seen.
+
+## Task E4 — kernel 04 run (2026-10-18)
+- Kernel `imalkaperera/paddy-04-ablation-shap` v1 (CPU, internet off), 2,589 s, code COMMIT `cd8d7da`, data v2. The log ends with "experiment 04 complete". Outputs: `results/tables/ablation*`, `shap_*`; `results/runs_meta/04_ablation_shap/`.
+- Fix after the run (presentation only, no numbers changed):
+  - The SHAP figure legend showed default colours, so it was redrawn locally from `shap_feature_importance.csv` with `redraw_shap_figure`.
+  - `ablation.md` printed R² with 1 decimal, so it was regenerated from `ablation.csv` after `to_markdown` gained 3-decimal formatting for R²-type columns.
+
+## Task E3 — kernel 03 run (2026-10-18)
+- Kernel `imalkaperera/paddy-03-earliness` v1 (CPU, internet off), 4,581 s, code COMMIT `cd8d7da`, data v2. The log ends with "experiment 03 complete".
+- The log is large (8.9 MB) because of 8,034 repeated scikit-learn warnings: "Skipping features without any observed values" (`SimpleImputer`). At long leads, the late-season blocks (b4, b5) do not exist yet, so those columns are entirely empty and the imputer drops them. This is expected behaviour, not an error.
+- The `.md` tables were regenerated locally from the `.csv` files with 3-decimal R² (presentation only).
+
+## Step F — report outputs and reproducibility (2026-10-18)
+- `python -m src.run_all` rebuilds, from the raw DCS files and saved Earth Engine extracts:
+  - the tidy yields;
+  - the master table and its 8 lead/shift variants;
+  - the descriptive figures, the shock analysis, the report figures and `results/predictions.csv`.
+
+  A run on 2026-10-18 reproduced the master table and all variants with identical SHA-256. Model training runs on Kaggle (kernels 01–05); `--experiments` reruns the same code locally.
+- `results/predictions.csv` = kernel-02 conformal predictions (baseline, ridge, RF; seed 42), with `lo`/`hi` from the standard split-conformal q at α = 0.1. Kernel-01 point predictions for all models and seeds are in `results/tables/predictions_models.csv`.
+- **New figures:**
+  - `validation_scheme.png`, drawn from `validation_folds_lead0.csv`;
+  - `district_error_map.png`, per-district RMSE of the seed-averaged kernel-01 predictions, with the HDX boundaries simplified for Earth Engine.
+- Kernel 05 is now `paddy-05-final-model` (final fits). The old shock-test kernel stub was removed because shock analysis needs no training.
+
+## Task E5 — kernel 05 final models (2026-10-18)
+- Kernel `imalkaperera/paddy-05-final-model` v1 (CPU, internet off), 74 s, code COMMIT `868c55f` (code dataset v3), data v2. The log ends with "experiment 05 complete".
+- Both random forests were tuned to `min_samples_leaf` 15 and `max_features` 0.5, and trained on 1,266 rows. Conformal q (α = 0.1, calibration harvest years 2024–2026, 123 rows): 910.6 kg/ha (all features) and 817.5 kg/ha (lagged + MODIS).
+- `models/final_models.json` and `models/model_card.md` are in git. The `.joblib` files are excluded by `.gitignore`; they are in the kernel output and `results/kaggle_runs/05_final_model/` on the PC.

@@ -1,0 +1,155 @@
+[{"stream_name":"stdout","time":1.103964345,"data":"contents of /kaggle/input:\n"}
+,{"stream_name":"stdout","time":1.109555614,"data":"input/ []\n"}
+,{"stream_name":"stdout","time":1.112247496,"data":"  datasets/ []\n"}
+,{"stream_name":"stdout","time":1.112293611,"data":"    imalkaperera/ []\n"}
+,{"stream_name":"stdout","time":1.122456988,"data":"      paddy-master-table/ ['series_modis.parquet', 'manifest.json', 'data_card.md', 'master_table.parquet', 'dcs_yield_tidy.csv', 'series_era5_daily.parquet']\n"}
+,{"stream_name":"stdout","time":1.144423307,"data":"      paddy-yield-code/ ['pyproject.toml', 'requirements.txt', 'COMMIT']\n"}
+,{"stream_name":"stdout","time":1.150574197,"data":"        configs/ ['district_map.csv', 'config.yaml']\n"}
+,{"stream_name":"stdout","time":1.157324981,"data":"        src/ ['run_all.py', 'kaggle_env.py', 'config.py', '__init__.py']\n"}
+,{"stream_name":"stdout","time":24.374598184,"data":"============================================================\n"}
+,{"stream_name":"stdout","time":24.374763194,"data":"{\n"}
+,{"stream_name":"stdout","time":24.37478269,"data":"  \"on_kaggle\": true,\n"}
+,{"stream_name":"stdout","time":24.374788244,"data":"  \"python\": \"3.13.15\",\n"}
+,{"stream_name":"stdout","time":24.374793328,"data":"  \"platform\": \"Linux-6.18.48+-x86_64-with-glibc2.39\",\n"}
+,{"stream_name":"stdout","time":24.374798205,"data":"  \"libs\": {\n"}
+,{"stream_name":"stdout","time":24.37480262,"data":"    \"numpy\": \"2.1.3\",\n"}
+,{"stream_name":"stdout","time":24.374807066,"data":"    \"pandas\": \"2.3.3\",\n"}
+,{"stream_name":"stdout","time":24.374811527,"data":"    \"scipy\": \"1.16.3\",\n"}
+,{"stream_name":"stdout","time":24.374815886,"data":"    \"sklearn\": \"1.6.1\",\n"}
+,{"stream_name":"stdout","time":24.374820751,"data":"    \"lightgbm\": \"4.6.0\",\n"}
+,{"stream_name":"stdout","time":24.374825601,"data":"    \"xgboost\": \"3.4.1\",\n"}
+,{"stream_name":"stdout","time":24.374830204,"data":"    \"shap\": \"0.52.0\",\n"}
+,{"stream_name":"stdout","time":24.374834696,"data":"    \"statsmodels\": \"0.15.0\",\n"}
+,{"stream_name":"stdout","time":24.374839384,"data":"    \"pyarrow\": \"23.0.1\",\n"}
+,{"stream_name":"stdout","time":24.374843977,"data":"    \"mlflow\": \"not installed\",\n"}
+,{"stream_name":"stdout","time":24.374848779,"data":"    \"matplotlib\": \"3.10.0\"\n"}
+,{"stream_name":"stdout","time":24.374853567,"data":"  },\n"}
+,{"stream_name":"stdout","time":24.374857946,"data":"  \"dataset_manifest\": {\n"}
+,{"stream_name":"stdout","time":24.374862674,"data":"    \"file\": \"master_table.parquet\",\n"}
+,{"stream_name":"stdout","time":24.374867498,"data":"    \"sha256\": \"2a8fdc80760632ba9b7259fed3d31ee8fd02b090b38a68a273deff32d2f5a158\",\n"}
+,{"stream_name":"stdout","time":24.374872906,"data":"    \"files\": {\n"}
+,{"stream_name":"stdout","time":24.374877509,"data":"      \"data_card.md\": \"28802f94cc0043e1822e7a8791b2f65922250a35cae8874c669b171d63f503cb\",\n"}
+,{"stream_name":"stdout","time":24.374882978,"data":"      \"data_dictionary.md\": \"a39b6268a1f66b031294b99dfda2bbcba7534fe426f30e606aa4d7739ae88811\",\n"}
+,{"stream_name":"stdout","time":24.374888181,"data":"      \"dcs_yield_tidy.csv\": \"350a2e62a6aafbd981ba32653f5c268ed44f392c54fda30a7ef8aa76f9d8cd61\",\n"}
+,{"stream_name":"stdout","time":24.374893306,"data":"      \"feature_list.json\": \"d89314736ee0646ccc78ffe0f2746987db15708b3088f6d12a13774467bc2f25\",\n"}
+,{"stream_name":"stdout","time":24.374898316,"data":"      \"master_table.parquet\": \"2a8fdc80760632ba9b7259fed3d31ee8fd02b090b38a68a273deff32d2f5a158\",\n"}
+,{"stream_name":"stdout","time":24.374903377,"data":"      \"series_era5_daily.parquet\": \"02bf2594b08cd9c67d434b7d4a5baf436900922720b69d8dd1e8fe9a26122167\",\n"}
+,{"stream_name":"stdout","time":24.374920844,"data":"      \"series_modis.parquet\": \"71ec4a9046c52e7289b53231c34409610e98739f0b88295aaed4e10e13f267b7\",\n"}
+,{"stream_name":"stdout","time":24.374926393,"data":"      \"series_rain_daily.parquet\": \"7c212fdee536eebac7e923b0fabaefb9862198c2ab2fbc913ca1656d7f2e570d\"\n"}
+,{"stream_name":"stdout","time":24.374931589,"data":"    },\n"}
+,{"stream_name":"stdout","time":24.374936219,"data":"    \"built_utc\": \"2026-10-17T11:32:55+00:00\",\n"}
+,{"stream_name":"stdout","time":24.374940826,"data":"    \"git_commit\": \"3a1d358bdd59a3b123d61feb4008af91415ce3b8\",\n"}
+,{"stream_name":"stdout","time":24.374945961,"data":"    \"git_dirty\": false\n"}
+,{"stream_name":"stdout","time":24.374950797,"data":"  },\n"}
+,{"stream_name":"stdout","time":24.37495511,"data":"  \"code_commit\": \"3a1d358bdd59a3b123d61feb4008af91415ce3b8\",\n"}
+,{"stream_name":"stdout","time":24.374960659,"data":"  \"kaggle_kernel_run\": \"Batch\"\n"}
+,{"stream_name":"stdout","time":24.374966124,"data":"}\n"}
+,{"stream_name":"stdout","time":24.374970771,"data":"============================================================\n"}
+,{"stream_name":"stdout","time":24.375479364,"data":"data dir: /kaggle/input/datasets/imalkaperera/paddy-master-table\n"}
+,{"stream_name":"stdout","time":24.739455042,"data":"rows 1266, features 120, models ['baseline_last5', 'ridge', 'random_forest', 'lightgbm', 'xgboost', 'hybrid_lgbm'], seeds [42, 7, 123, 2024, 31337]\n"}
+,{"stream_name":"stdout","time":25.233511863,"data":"  main baseline_last5 seed 42: RMSE 606 MAE 443 R2 0.521 (0s)\n"}
+,{"stream_name":"stdout","time":25.234117926,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":25.643938896999998,"data":"  main baseline_last5 seed 7: RMSE 606 MAE 443 R2 0.521 (0s)\n"}
+,{"stream_name":"stdout","time":25.644276455,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":25.99132765,"data":"  main baseline_last5 seed 123: RMSE 606 MAE 443 R2 0.521 (0s)\n"}
+,{"stream_name":"stdout","time":25.991842295,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":26.298159543,"data":"  main baseline_last5 seed 2024: RMSE 606 MAE 443 R2 0.521 (0s)\n"}
+,{"stream_name":"stdout","time":26.298569503,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":26.631023318,"data":"  main baseline_last5 seed 31337: RMSE 606 MAE 443 R2 0.521 (0s)\n"}
+,{"stream_name":"stdout","time":26.631545649,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":47.622678534,"data":"  main ridge seed 42: RMSE 620 MAE 438 R2 0.497 (21s)\n"}
+,{"stream_name":"stdout","time":47.626635105,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":65.089000593,"data":"  main ridge seed 7: RMSE 620 MAE 438 R2 0.497 (17s)\n"}
+,{"stream_name":"stdout","time":65.09003265,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":81.846137821,"data":"  main ridge seed 123: RMSE 620 MAE 438 R2 0.497 (17s)\n"}
+,{"stream_name":"stdout","time":81.846884813,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":98.512999438,"data":"  main ridge seed 2024: RMSE 620 MAE 438 R2 0.497 (17s)\n"}
+,{"stream_name":"stdout","time":98.514185025,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":115.183615826,"data":"  main ridge seed 31337: RMSE 620 MAE 438 R2 0.497 (17s)\n"}
+,{"stream_name":"stdout","time":115.187198446,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":688.590300471,"data":"  main random_forest seed 42: RMSE 606 MAE 437 R2 0.521 (573s)\n"}
+,{"stream_name":"stdout","time":688.610505096,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":1272.147102234,"data":"  main random_forest seed 7: RMSE 608 MAE 439 R2 0.517 (584s)\n"}
+,{"stream_name":"stdout","time":1272.172713243,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":1842.183650566,"data":"  main random_forest seed 123: RMSE 603 MAE 434 R2 0.525 (570s)\n"}
+,{"stream_name":"stdout","time":1842.221973187,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":2411.610346906,"data":"  main random_forest seed 2024: RMSE 600 MAE 432 R2 0.529 (569s)\n"}
+,{"stream_name":"stdout","time":2411.618771627,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":2984.251083384,"data":"  main random_forest seed 31337: RMSE 603 MAE 433 R2 0.525 (573s)\n"}
+,{"stream_name":"stdout","time":2984.273452798,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":3254.531116651,"data":"  main lightgbm seed 42: RMSE 629 MAE 453 R2 0.483 (270s)\n"}
+,{"stream_name":"stdout","time":3254.538421006,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":3536.702799021,"data":"  main lightgbm seed 7: RMSE 635 MAE 457 R2 0.473 (282s)\n"}
+,{"stream_name":"stdout","time":3536.706934119,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":3812.492672183,"data":"  main lightgbm seed 123: RMSE 636 MAE 462 R2 0.471 (276s)\n"}
+,{"stream_name":"stdout","time":3812.497052868,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":4082.889828556,"data":"  main lightgbm seed 2024: RMSE 640 MAE 461 R2 0.465 (270s)\n"}
+,{"stream_name":"stdout","time":4082.896463503,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":4356.724896634,"data":"  main lightgbm seed 31337: RMSE 629 MAE 455 R2 0.483 (274s)\n"}
+,{"stream_name":"stdout","time":4356.728154421,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":5199.154771248,"data":"  main xgboost seed 42: RMSE 632 MAE 457 R2 0.478 (842s)\n"}
+,{"stream_name":"stdout","time":5199.188942746,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":6165.445276062,"data":"  main xgboost seed 7: RMSE 633 MAE 458 R2 0.476 (966s)\n"}
+,{"stream_name":"stdout","time":6165.459947322,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":6989.49397411,"data":"  main xgboost seed 123: RMSE 633 MAE 456 R2 0.476 (824s)\n"}
+,{"stream_name":"stdout","time":6989.500917352,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":7827.285638947,"data":"  main xgboost seed 2024: RMSE 634 MAE 457 R2 0.475 (838s)\n"}
+,{"stream_name":"stdout","time":7827.294898957,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8669.000373702,"data":"  main xgboost seed 31337: RMSE 633 MAE 459 R2 0.477 (842s)\n"}
+,{"stream_name":"stdout","time":8669.035309091,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8727.196486219,"data":"  main hybrid_lgbm seed 42: RMSE 654 MAE 476 R2 0.441 (58s)\n"}
+,{"stream_name":"stdout","time":8727.197025668,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8786.166081792,"data":"  main hybrid_lgbm seed 7: RMSE 664 MAE 483 R2 0.424 (59s)\n"}
+,{"stream_name":"stdout","time":8786.169951968,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8844.891741396,"data":"  main hybrid_lgbm seed 123: RMSE 657 MAE 479 R2 0.435 (59s)\n"}
+,{"stream_name":"stdout","time":8844.892215593,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8903.429608466,"data":"  main hybrid_lgbm seed 2024: RMSE 667 MAE 483 R2 0.420 (59s)\n"}
+,{"stream_name":"stdout","time":8903.432208279,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8961.243219354,"data":"  main hybrid_lgbm seed 31337: RMSE 663 MAE 480 R2 0.426 (58s)\n"}
+,{"stream_name":"stdout","time":8961.243716415,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":8961.350955983,"data":"evaluation rows (common to all models): 808\n"}
+,{"stream_name":"stdout","time":8963.235936819,"data":"            model  rmse_mean  rmse_std  mae_mean  r2_mean\n"}
+,{"stream_name":"stdout","time":8963.235995102,"data":"3   random_forest    604.051     2.921   434.987    0.523\n"}
+,{"stream_name":"stdout","time":8963.236003299,"data":"0  baseline_last5    605.762     0.000   442.669    0.521\n"}
+,{"stream_name":"stdout","time":8963.236009502,"data":"4           ridge    620.233     0.000   438.235    0.497\n"}
+,{"stream_name":"stdout","time":8963.23601529,"data":"5         xgboost    633.123     0.623   457.363    0.476\n"}
+,{"stream_name":"stdout","time":8963.236021396,"data":"2        lightgbm    633.944     4.896   457.663    0.475\n"}
+,{"stream_name":"stdout","time":8963.236027479,"data":"1     hybrid_lgbm    661.114     5.072   480.109    0.429\n"}
+,{"stream_name":"stdout","time":8963.238935342,"data":"           model  n_pairs  median_improvement_kg_ha  p_holm  rank_biserial_r\n"}
+,{"stream_name":"stdout","time":8963.238976137,"data":"0    hybrid_lgbm      808                  -27.3146  0.0000          -0.1862\n"}
+,{"stream_name":"stdout","time":8963.238986809,"data":"1  random_forest      808                    8.9417  0.4488           0.0645\n"}
+,{"stream_name":"stdout","time":8963.23899619,"data":"2       lightgbm      808                   -2.9167  0.4563          -0.0582\n"}
+,{"stream_name":"stdout","time":8963.23900539,"data":"3        xgboost      808                   -8.2439  0.4563          -0.0561\n"}
+,{"stream_name":"stdout","time":8963.239014425,"data":"4          ridge      808                    7.2894  0.4563           0.0427\n"}
+,{"stream_name":"stdout","time":9218.779197343,"data":"  no_flagged_train lightgbm seed 42: RMSE 631 MAE 454 R2 0.480 (256s)\n"}
+,{"stream_name":"stdout","time":9218.782502166,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":9470.920100278,"data":"  no_flagged_train lightgbm seed 7: RMSE 629 MAE 454 R2 0.483 (252s)\n"}
+,{"stream_name":"stdout","time":9470.923498105,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":9722.608306552,"data":"  no_flagged_train lightgbm seed 123: RMSE 628 MAE 455 R2 0.484 (252s)\n"}
+,{"stream_name":"stdout","time":9722.611961469,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":9980.834709102,"data":"  no_flagged_train lightgbm seed 2024: RMSE 636 MAE 456 R2 0.472 (258s)\n"}
+,{"stream_name":"stdout","time":9980.838626665,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":10229.672916667,"data":"  no_flagged_train lightgbm seed 31337: RMSE 631 MAE 456 R2 0.479 (249s)\n"}
+,{"stream_name":"stdout","time":10229.679757518,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":10233.749157858,"data":"  ldo baseline_last5 seed 42: RMSE 606 MAE 443 R2 0.521 (4s)\n"}
+,{"stream_name":"stdout","time":10233.749653632,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":10263.019233495,"data":"  ldo ridge seed 42: RMSE 645 MAE 466 R2 0.457 (29s)\n"}
+,{"stream_name":"stdout","time":10263.020221559,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":10594.059270744,"data":"  ldo lightgbm seed 42: RMSE 660 MAE 479 R2 0.431 (331s)\n"}
+,{"stream_name":"stdout","time":10594.072025417,"data":"  (mlflow logging skipped: ModuleNotFoundError: No module named 'mlflow')\n"}
+,{"stream_name":"stdout","time":10623.93957686,"data":"  k-fold demo seed 42: 30s\n"}
+,{"stream_name":"stdout","time":10654.240495938,"data":"  k-fold demo seed 7: 30s\n"}
+,{"stream_name":"stdout","time":10685.045027865,"data":"  k-fold demo seed 123: 31s\n"}
+,{"stream_name":"stdout","time":10714.597672765,"data":"  k-fold demo seed 2024: 30s\n"}
+,{"stream_name":"stdout","time":10744.055171,"data":"  k-fold demo seed 31337: 29s\n"}
+,{"stream_name":"stdout","time":10744.071962987,"data":"                      scheme  n_mean  n_std  rmse_mean  rmse_std  mae_mean  mae_std  r2_mean  r2_std  rmse_pct_mean  rmse_pct_std\n"}
+,{"stream_name":"stdout","time":10744.071999998,"data":"0  forward-chaining (honest)   808.0    0.0    638.618     3.084   460.362    1.844    0.467   0.005         16.110         0.078\n"}
+,{"stream_name":"stdout","time":10744.072005172,"data":"1      random 5-fold (leaky)   808.0    0.0    468.456     5.909   346.767    4.376    0.713   0.007         11.817         0.149\n"}
+,{"stream_name":"stdout","time":10744.072360343,"data":"experiment 01 complete\n"}
+,{"stream_name":"stderr","time":10747.83440162,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":10747.83448044,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":10748.174518134,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":10748.174558392,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":10749.176515849,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":10749.869225794,"data":"[NbConvertApp] Writing 284860 bytes to __results__.html\n"}
+]

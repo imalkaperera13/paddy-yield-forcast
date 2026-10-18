@@ -49,13 +49,13 @@ def _lib_versions() -> dict[str, str]:
     return versions
 
 
-def banner(data_slug: str, code_commit: str | None = None) -> dict:
+def banner(data_slug: str, code_commit: str | None = None, data_dir: Path | None = None) -> dict:
     """Print and return python, library, dataset and code versions.
 
     The dataset version is read from manifest.json, which is written next to the
     master table when it is published (sha256 + build time + git commit).
     """
-    manifest_path = input_dir(data_slug) / "manifest.json"
+    manifest_path = (data_dir or input_dir(data_slug)) / "manifest.json"
     manifest = (json.loads(manifest_path.read_text(encoding="utf-8"))
                 if manifest_path.exists() else {"warning": "manifest.json not found"})
     info = {

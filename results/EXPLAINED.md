@@ -1,6 +1,6 @@
 # Results explained
 
-> **Status: no results yet.** Every table and figure below is filled in only from code that has been run. Each one cites its Kaggle kernel version and git commit.
+> **Status: kernel 01 results in (2026-10-17); later sections pending.** Every table and figure below is filled in only from code that has been run. Each one cites its Kaggle kernel version and git commit.
 
 For each item, the explanation covers:
 - what it shows,
@@ -9,28 +9,69 @@ For each item, the explanation covers:
 - why it may have happened. These reasons are hypotheses unless they were tested.
 
 ## Model comparison
-_pending (Task 5)_
+*Source: kernel `paddy-01-baselines-and-models` v2, commit `3a1d358`; table in `RESULTS.md` §1.*
+- **What it shows:** the error of each model, forecasting at the reference harvest date, over 808 district-seasons in 33 test seasons (2009/10–2025/26).
+- **How to read it:** lower RMSE/MAE is better. Errors average about 15% of mean yield (RMSE) and about 11% (MAE). The random forest (604 kg/ha RMSE) and the last-5-seasons baseline (606) are level. Ridge (620), XGBoost (633), LightGBM (634) and the hybrid (661) are all worse than the baseline.
+- **What it does not prove:** that satellite/climate data carry no signal. It shows only that, with these features, about 25 seasons per district and these models, they do not reduce error *on average* below a district's own recent history. Results at earlier lead times, in shock seasons and per feature group are still to come.
+- **Why it may have happened (hypotheses, untested):**
+  - Most variance is between districts and is slow-moving, which the baseline already captures.
+  - 120 features against about 600–1,000 training rows per fold invites overfitting; boosting with tuned depth is more prone to this than a bagged forest.
+  - The labels are noisy crop-cut estimates.
+  - The wet-zone cropland mask covers little paddy, so NDVI there is weak.
+  - The hybrid model learns year-to-year residuals that may be mostly noise, then adds them on top of the baseline.
 
 ## Paired Wilcoxon vs baseline
-_pending (Task 6)_
+*Source: as above; `RESULTS.md` §2.*
+- **What it shows:** whether each model's absolute errors are systematically smaller than the baseline's on the same district-seasons.
+- **How to read it:** p (Holm) < 0.05 means a real difference. The sign of r gives the direction, and its size gives the effect (|r| < 0.1 is negligible).
+- **Result:** random forest, ridge, LightGBM and XGBoost all have p (Holm) ≈ 0.45 and |r| ≤ 0.065, so there is no detectable difference from the baseline. The hybrid is significantly worse (r = −0.19, p < 0.001).
+- **What it does not prove:** that the models are *equal* to the baseline. A non-significant test is not evidence of equivalence. The rows are also not fully independent, because districts in the same season share weather.
 
 ## Conformal coverage and interval width
-_pending (Task 7)_
+*Source: kernel `paddy-02-conformal` v1, commit `cd8d7da`; `RESULTS.md` §8.*
+- **What it shows:** whether the "90%" intervals contain the observed yield about 90% of the time on future seasons, and how wide they are.
+- **How to read it:** coverage near 0.90 means the intervals are calibrated. Lower coverage means overconfident intervals, and higher means needlessly wide ones. Width says how useful they are: ±950 kg/ha is about ±24% of mean yield.
+- **Result:** 86–88% overall. Outside the 4 named shock seasons it is 90–92%; inside them it is 56–60%.
+- **What it does not prove:** that the guarantee holds. Split conformal's guarantee assumes the calibration and test seasons are exchangeable. Yield seasons are not exchangeable: there is trend, and there are policy shocks. This is why coverage fails exactly where the season is unlike the calibration years.
+- **Why it may have happened:** a shock season produces errors larger than any in the 3 calibration years, so the intervals are too narrow. Once the shock years enter calibration, intervals become very wide (≈2,900–3,260 kg/ha) and over-cover for several seasons. Possible fixes, not tested: adaptive conformal methods that update after each season, or a longer or weighted calibration window.
 
 ## Earliness curve
-_pending (Task 8)_
+*Source: kernel `paddy-03-earliness` v1, commit `cd8d7da`; `RESULTS.md` §10.*
+- **What it shows:** forecast error when the forecast is made 12, 10, 8, 6, 4, 2 or 0 weeks before the reference harvest date, using only data available at that time.
+- **How to read it:** a curve that falls towards lead 0 means in-season data add information as the season progresses. A flat curve means they do not.
+- **Result:** the random forest is almost flat (615 → 606 kg/ha) and never better than the baseline. Ridge is erratic. In practice this means a forecast 12 weeks before harvest is about as good as one at harvest. Both are about as good as the last-5-seasons average, which is known before the season starts.
+- **What it does not prove:** that no earlier signal exists. Each lead is one seed, and the y-axis in the figure spans only about 45 kg/ha, so small wiggles are noise. Window-shift sensitivity (±2 weeks) changes the random forest by at most 5.5 kg/ha, so the choice of planting dates is not the cause.
+- **Why it may have happened (hypothesis):** the features that matter (past yields) are already known pre-season, and the in-season satellite and weather features add little at district scale (see ablation).
 
 ## Ablation and SHAP
-_pending (Task 9)_
+*Source: kernel `paddy-04-ablation-shap` v1, commit `cd8d7da`; `RESULTS.md` §9.*
+- **What it shows:** how much each data source contributes. Ablation measures what is lost or gained when a group is removed or added, scored on the same 808 rows. SHAP measures how much each feature moves the predictions.
+- **How to read it:** compare each RMSE with the baseline (606) and with 'all' (606), and check the Wilcoxon p (Holm). A large SHAP value means the model relies on that feature; it does **not** mean the feature improves accuracy.
+- **Result:**
+  - Past yields carry about 77% of the SHAP weight, and without them the model is far worse (RMSE 683).
+  - MODIS is the only other group whose removal significantly hurts (p (Holm) = 0.037).
+  - Lagged yield + MODIS gives the lowest RMSE (596) but is not significantly better than the baseline after correction.
+  - The 66 temperature/radiation features take 13% of SHAP weight yet add no accuracy, which suggests the model fits noise in them.
+- **What it does not prove:** that weather does not matter for paddy. District-season averages at about 11 km (ERA5) and about 5 km (CHIRPS) may be too coarse. The cropland mask under-covers wet-zone paddy. Irrigation, which covers much of the dry zone, buffers the rainfall signal. One seed only.
+- **Why it may have happened (hypotheses):** most of the variance is between districts and slow (trend), and the baseline already captures it. Year-to-year weather effects are small relative to label noise and the policy shock.
 
 ## Shock seasons
-_pending (Task 10)_
+*Source: kernel-01 v2 predictions, analysed locally (`src/analysis/shocks.py`); `RESULTS.md` §7.*
+- **What it shows:** the error in seasons with unusually low national yield, compared with ordinary test seasons.
+- **How to read it:** look at the bias column. A large positive bias means the forecast missed a collapse.
+- **What it does not prove:** that the models "cannot" forecast shocks. There are only 4 named shock seasons (99 rows), and the causes of the data-chosen ones are not verified.
+- **Why it may have happened (hypotheses):** the 2021/22 losses came from a fertiliser policy that is absent from every input. The 2010/11 flood loss was not visible in district-mean rainfall/NDVI at the reference harvest date.
 
 ## Per-district error map, yield-trend plots, validation scheme diagram
 _pending_
 
 ## Why random k-fold would inflate scores here
-_pending: this needs a demonstration run that scores the same model with random k-fold and with forward-chaining (kernel 01_models)._
+*Source: as above; `RESULTS.md` §4.*
+The same LightGBM model was scored on the same 808 rows two ways:
+- **Forward-chaining:** R² 0.467, RMSE 639 kg/ha.
+- **Random 5-fold:** R² 0.713, RMSE 468 kg/ha.
+
+Random folds therefore make the model look about 27% better on RMSE and add about 0.25 to R². The reason is that random folds put *later* seasons, and other districts in the *same* season, into training. The model then learns that season's shared weather and fertiliser shock, and the yield trend after the test year: information that would not exist at forecast time. This is why random k-fold is banned for the main results (`random_kfold` raises an error).
 
 ## Limitations observed
 _Filled from the data as work proceeds. Items known so far (Task 1, from the DCS files):_

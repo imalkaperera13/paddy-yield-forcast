@@ -97,6 +97,17 @@ validation:
 
 conformal:
   alpha: 0.1                    # target 90% coverage
+  reliability_alphas: [0.5, 0.4, 0.3, 0.2, 0.1, 0.05]
+  models: [baseline_last5, ridge, random_forest]
+
+followup_models: [baseline_last5, ridge, random_forest]   # kernels 02-04 (best + simple models)
+followup_seed: 42
+
+shocks:
+  # named in advance (cause known from outside the data)
+  policy_economic: [[Maha, 2021], [Yala, 2022], [Maha, 2022]]   # 2021 chemical-fertiliser ban, 2022 crisis
+  weather_named: [[Maha, 2010]]                                 # Jan-Feb 2011 floods
+  data_chosen_k: 3              # plus the k largest other negative national anomalies (cause unverified)
 
 earliness:
   lead_weeks_before_harvest: [12, 10, 8, 6, 4, 2, 0]
@@ -105,7 +116,7 @@ figures:
   dpi: 300
 
 kaggle:
-  username: TBD                 # your Kaggle username (not secret); token stays in ~/.kaggle only
+  username: imalkaperera          # Kaggle username (not secret); token stays in ~/.kaggle only
   data_slug: paddy-master-table
   data_title: Paddy master table
   code_slug: paddy-yield-code

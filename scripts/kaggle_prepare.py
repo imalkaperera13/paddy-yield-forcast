@@ -63,11 +63,23 @@ def prepare_data(cfg: dict) -> None:
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     shutil.copy2(src, out / src.name)
-    for extra in ["docs/data_dictionary.md"]:
-        shutil.copy2(ROOT / extra, out / Path(extra).name)
+    # everything later experiments need to rebuild features at other lead times / shifts
+    extras = ["data/processed/feature_list.json", "data/processed/series_rain_daily.parquet",
+              "data/processed/series_modis.parquet", "data/processed/series_era5_daily.parquet",
+              "data/interim/dcs_yield_tidy.csv", "docs/data_dictionary.md", "docs/data_card.md"]
+    for extra in extras:
+        if (ROOT / extra).exists():
+            shutil.copy2(ROOT / extra, out / Path(extra).name)
+    # earliness / window-shift feature tables (flat: Kaggle flattens sub-folders anyway)
+    vdir = ROOT / "data" / "processed" / "variants"
+    variants = sorted(vdir.glob("master_lead*_shift*.parquet"))
+    for v in variants:
+        shutil.copy2(v, out / v.name)
+    print(f"{len(variants)} variant tables included")
     manifest = {
         "file": src.name,
         "sha256": _sha256(src),
+        "files": {p.name: _sha256(p) for p in sorted(out.iterdir()) if p.is_file()},
         "built_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "git_commit": _git_commit(),
         "git_dirty": _git_dirty(),
