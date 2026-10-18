@@ -1,10 +1,7 @@
-"""Kaggle kernel: paddy-05-shock-tests
+"""Kaggle kernel: paddy-05-final-model
 
-Fertiliser-ban seasons and worst anomaly seasons as held-out robustness tests
-
-Thin wrapper. All logic lives in src/ (attached as the private code dataset).
-Inputs: /kaggle/input/<data_slug>/ (read-only). Outputs: /kaggle/working/05_shock/ only.
-Re-running resumes: finished units are skipped if their output file already exists.
+Fits and saves the final random forests on all published labels (+ split-conformal q).
+Thin wrapper; logic in src/experiments/final_model.py. Outputs: /kaggle/working/05_final_model/.
 """
 
 import sys
@@ -12,7 +9,7 @@ from pathlib import Path
 
 CODE_SLUG = "paddy-yield-code"     # keep in sync with configs/config.yaml -> kaggle.code_slug
 DATA_SLUG = "paddy-master-table"   # keep in sync with configs/config.yaml -> kaggle.data_slug
-EXPERIMENT = "05_shock"
+EXPERIMENT = "05_final_model"
 
 import os
 import zipfile
@@ -66,6 +63,7 @@ info = banner(DATA_SLUG, code_commit=commit, data_dir=data_dir)
 out = output_dir(EXPERIMENT)
 (out / "run_info.json").write_text(__import__("json").dumps(info, indent=2))
 
-# Shock-season evaluation needs no training: it reads saved predictions and runs locally
-# with `python -m src.analysis.shocks` (see docs/decisions.md, Task E5).
-raise SystemExit("Not a Kaggle step: run python -m src.analysis.shocks locally.")
+print("data dir:", data_dir)
+from src.experiments.final_model import main  # noqa: E402
+
+main(data_dir, out, commit=commit)

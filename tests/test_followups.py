@@ -64,3 +64,18 @@ def test_shock_list_has_named_and_data_chosen_seasons():
     s = shock_list(CFG, labels)
     assert {"policy/economic (named)", "weather (named)"} <= set(s.shock_type)
     assert ((s.season == "Maha") & (s.year == 2015)).any()
+
+
+def test_SYNTHETIC_final_model_saves_and_predicts_intervals(tmp_path):
+    import json
+
+    import joblib
+
+    from src.experiments.final_model import fit_one, predict
+    df = synthetic_master(seed=5)
+    model, meta = fit_one(df, ["f1", "f2"], 42, CFG)
+    joblib.dump(model, tmp_path / "rf_all.joblib")
+    (tmp_path / "m.json").write_text(json.dumps({"models": {"rf_all": meta}}, default=float))
+    out = predict(tmp_path / "rf_all.joblib", tmp_path / "m.json", df.head(5))
+    assert (out.lo < out.y_pred).all() and (out.y_pred < out.hi).all()
+    assert meta["conformal"]["n_calibration"] > 0

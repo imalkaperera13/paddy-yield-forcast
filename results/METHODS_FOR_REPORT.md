@@ -1,6 +1,6 @@
 # Methods (draft for the report)
 
-> **Status: skeleton.** Sections are filled in as each task is completed. Data versions and download dates come from `docs/data_dictionary.md`, and run versions come from `docs/decisions.md`.
+> **Status: complete for Stage 1 (2026-10-18).** Data versions and download dates come from `docs/data_dictionary.md`, and run versions come from `docs/decisions.md`.
 
 ## 1. Data
 ### 1.1 Yield labels: DCS Paddy Statistics
@@ -68,5 +68,34 @@ Definitions, with $y_i$ the observed and $\hat y_i$ the predicted yield (kg/ha) 
 ## 6. Statistical testing
 For each model, the absolute errors per district-season (averaged over seeds) are compared with the baseline's absolute errors on the same district-seasons using a two-sided paired Wilcoxon signed-rank test (pairs with zero difference are dropped). The effect size is the matched-pairs rank-biserial correlation, *r* = (W⁺ − W⁻)/(W⁺ + W⁻); a positive *r* means the model's errors are smaller. p-values are Holm-adjusted across the five model-vs-baseline comparisons.
 
-## 7. Computing environment
-Training ran on Kaggle (CPU, internet off). Library versions are taken from each kernel's `run_info.json`.
+## 7. Prediction intervals (split conformal)
+For each forward-chaining fold, the training window is split into a proper training set (all but the last 3 harvest years) and a calibration set (the last 3 harvest years). The model is tuned and fitted on the proper set only. The absolute residuals $r_i = |y_i - \hat y_i|$ on the $n$ calibration rows give
+$$q = r_{(k)},\quad k = \lceil (n+1)(1-\alpha) \rceil,$$
+the $k$-th smallest residual ($q=\infty$ if $k>n$). The interval for a test row is $\hat y \pm q$, with α = 0.1. A per-season (Mondrian) variant computes $q$ separately from Maha and Yala calibration rows. Reliability is assessed at α ∈ {0.5, 0.4, 0.3, 0.2, 0.1, 0.05}. The finite-sample guarantee assumes the calibration and test seasons are exchangeable. Seasonal yields are not (trend, policy shocks), so coverage is reported overall, per test season and inside vs outside pre-named shock seasons.
+
+## 8. Earliness and window-shift sensitivity
+Forecasts are made L ∈ {12, 10, 8, 6, 4, 2, 0} weeks before the reference harvest date. For each L the features are rebuilt so that only satellite and climate data ending before that date (minus the assumed latencies) enter. The forward-chaining folds are rebuilt so that training uses only labels published by that date. All leads are scored on the same district-seasons. Sensitivity to the nominal planting dates is tested by moving all growth windows ±2 weeks at lead 0.
+
+## 9. Feature-group ablation and SHAP
+The random forest is retrained on 9 feature sets: all groups; lagged yield only; lagged yield plus one other group; all minus one group; and no lagged yield. Each set is tuned within each training window and scored on the same rows. Each variant is compared with the baseline and with the full model by paired Wilcoxon tests, Holm-adjusted over all 17 comparisons. SHAP values (TreeExplainer) are computed for every test row from the model of its own fold, refitted with that fold's chosen parameters. Importance is the mean |SHAP| per feature, summed per group.
+
+## 10. Shock seasons
+Shock seasons were fixed before any error was inspected:
+- Maha 2021/22, Yala 2022 and Maha 2022/23 (chemical-fertiliser ban and economic crisis);
+- Maha 2010/11 (floods);
+- the 3 other largest negative national area-weighted yield anomalies relative to the previous 10 same seasons (Maha 2023/24, Maha 2024/25 and Yala 2023; cause not verified).
+
+Error and mean bias (predicted − observed) are reported per shock season and pooled, against all other test seasons, from the saved forward-chaining predictions.
+
+## 11. Final models
+For forecasting new seasons, the random forest is refitted on all 1,266 labelled district-seasons with two feature sets: all features, and lagged yield + MODIS. Hyper-parameters are tuned with the same inner time splits. A split-conformal $q$ is computed with the last 3 harvest years as calibration (model fitted on the older years). These fits are not used for any reported metric.
+
+## 12. Computing environment
+Training ran on Kaggle (CPU, internet off), in five kernels:
+- `paddy-01-baselines-and-models` v2;
+- `paddy-02-conformal` v1;
+- `paddy-03-earliness` v1;
+- `paddy-04-ablation-shap` v1;
+- `paddy-05-final-model`.
+
+Kernel 01 used code commit `3a1d358` and data `paddy-master-table` v1. Kernels 02–05 used commit `cd8d7da` and data v2. Both data versions contain the same master table (SHA-256 `2a8fdc80…`); v2 adds the lead and shift tables. Library versions come from each kernel's `run_info.json` (`results/runs_meta/`). Kaggle's image provided Python 3.13, scikit-learn 1.6.1, LightGBM 4.6.0, XGBoost 3.4.1 and SHAP 0.52.0, which differ from the pinned local `requirements.txt`. Shock analysis and report figures were computed locally from saved predictions (`python -m src.run_all`).

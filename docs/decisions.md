@@ -134,3 +134,16 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - Kernel `imalkaperera/paddy-03-earliness` v1 (CPU, internet off), 4,581 s, code COMMIT `cd8d7da`, data v2. The log ends with "experiment 03 complete".
 - The log is large (8.9 MB) because of 8,034 repeated scikit-learn warnings: "Skipping features without any observed values" (`SimpleImputer`). At long leads, the late-season blocks (b4, b5) do not exist yet, so those columns are entirely empty and the imputer drops them. This is expected behaviour, not an error.
 - The `.md` tables were regenerated locally from the `.csv` files with 3-decimal R² (presentation only).
+
+## Step F — report outputs and reproducibility (2026-10-18)
+- `python -m src.run_all` rebuilds, from the raw DCS files and saved Earth Engine extracts:
+  - the tidy yields;
+  - the master table and its 8 lead/shift variants;
+  - the descriptive figures, the shock analysis, the report figures and `results/predictions.csv`.
+
+  A run on 2026-10-18 reproduced the master table and all variants with identical SHA-256. Model training runs on Kaggle (kernels 01–05); `--experiments` reruns the same code locally.
+- `results/predictions.csv` = kernel-02 conformal predictions (baseline, ridge, RF; seed 42), with `lo`/`hi` from the standard split-conformal q at α = 0.1. Kernel-01 point predictions for all models and seeds are in `results/tables/predictions_models.csv`.
+- **New figures:**
+  - `validation_scheme.png`, drawn from `validation_folds_lead0.csv`;
+  - `district_error_map.png`, per-district RMSE of the seed-averaged kernel-01 predictions, with the HDX boundaries simplified for Earth Engine.
+- Kernel 05 is now `paddy-05-final-model` (final fits). The old shock-test kernel stub was removed because shock analysis needs no training.

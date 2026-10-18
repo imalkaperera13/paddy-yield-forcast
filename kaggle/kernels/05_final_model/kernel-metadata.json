@@ -1,6 +1,6 @@
 {
-  "id": "<USERNAME>/paddy-05-shock-tests",
-  "title": "paddy-05-shock-tests",
+  "id": "<USERNAME>/paddy-05-final-model",
+  "title": "paddy-05-final-model",
   "code_file": "run.py",
   "language": "python",
   "kernel_type": "script",
