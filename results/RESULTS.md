@@ -143,3 +143,34 @@ Paired Wilcoxon tests, Holm-adjusted over all 17 comparisons:
 **SHAP**, share of total mean |SHAP|: lagged yield 76.6% (9 features), temperature/radiation 13.0% (66 features), MODIS 7.0% (31), rainfall 3.4% (14). The top features are the last-5 mean (230 kg/ha mean |SHAP|), the trend (134), the previous same-season yield (106) and the long-term mean (84). The strongest non-yield feature is pre-season rainfall (7 kg/ha).
 
 **Reading:** almost all of the predictive skill comes from each district's own yield history. MODIS vegetation is the only satellite/climate group with a measurable, but small, contribution. Rainfall and temperature/radiation add noise rather than skill at lead 0.
+
+## 10. Earliness and growth-window shift (`earliness.md`, `earliness_wilcoxon_vs_baseline.md`, `window_shift_sensitivity.md`, figure `earliness_curve.png`)
+- **Source:** Kaggle kernel `imalkaperera/paddy-03-earliness` v1, commit `cd8d7da`, data `paddy-master-table` v2; 4,581 s.
+- **Setup:** seed 42. Each lead uses its own feature table (only data available that many weeks before the reference harvest) and its own forward-chaining folds. All leads are scored on the same 808 rows.
+
+RMSE in kg/ha, R² in brackets:
+
+| weeks before harvest | baseline | random forest | ridge |
+|---|---|---|---|
+| 12 | 605.8 (0.521) | 614.9 (0.506) | 625.5 (0.489) |
+| 10 | 605.8 (0.521) | 612.6 (0.510) | 639.6 (0.466) |
+| 8 | 605.8 (0.521) | 613.3 (0.509) | 634.9 (0.473) |
+| 6 | 605.8 (0.521) | 612.4 (0.510) | 647.3 (0.453) |
+| 4 | 605.8 (0.521) | 608.4 (0.517) | 651.2 (0.446) |
+| 2 | 605.8 (0.521) | 609.9 (0.514) | 610.1 (0.514) |
+| 0 | 605.8 (0.521) | 605.8 (0.521) | 620.2 (0.497) |
+
+- **The baseline does not depend on lead:** the same-season yields it uses are already published 12 weeks before harvest.
+- **Random forest** improves only slightly as harvest approaches (615 → 606 kg/ha) and never beats the baseline. By Wilcoxon (Holm) it is never significantly different from the baseline: p (Holm) = 1.0 at every lead.
+- **Ridge** is unstable and worse at most leads. At lead 10 its errors are significantly larger than the baseline's (r = −0.14, p (Holm) = 0.006).
+- **Consistency check:** the lead-0 random forest and ridge reproduce kernel 01's seed-42 values exactly (605.8 and 620.2), and kernel 04's 'all' variant (605.8).
+
+**Window shift** (lead 0; growth windows moved ±2 weeks):
+
+| shift | baseline | random forest | ridge |
+|---|---|---|---|
+| −2 weeks | 605.8 | 600.3 | 638.1 |
+| 0 | 605.8 | 605.8 | 620.2 |
+| +2 weeks | 605.8 | 604.4 | 630.6 |
+
+The random forest changes by at most 5.5 kg/ha, within run-to-run variation. Conclusions do not depend on the nominal planting dates.

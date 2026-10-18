@@ -36,7 +36,12 @@ For each item, the explanation covers:
 - **Why it may have happened:** a shock season produces errors larger than any in the 3 calibration years, so the intervals are too narrow. Once the shock years enter calibration, intervals become very wide (≈2,900–3,260 kg/ha) and over-cover for several seasons. Possible fixes, not tested: adaptive conformal methods that update after each season, or a longer or weighted calibration window.
 
 ## Earliness curve
-_pending (Task 8)_
+*Source: kernel `paddy-03-earliness` v1, commit `cd8d7da`; `RESULTS.md` §10.*
+- **What it shows:** forecast error when the forecast is made 12, 10, 8, 6, 4, 2 or 0 weeks before the reference harvest date, using only data available at that time.
+- **How to read it:** a curve that falls towards lead 0 means in-season data add information as the season progresses. A flat curve means they do not.
+- **Result:** the random forest is almost flat (615 → 606 kg/ha) and never better than the baseline. Ridge is erratic. In practice this means a forecast 12 weeks before harvest is about as good as one at harvest. Both are about as good as the last-5-seasons average, which is known before the season starts.
+- **What it does not prove:** that no earlier signal exists. Each lead is one seed, and the y-axis in the figure spans only about 45 kg/ha, so small wiggles are noise. Window-shift sensitivity (±2 weeks) changes the random forest by at most 5.5 kg/ha, so the choice of planting dates is not the cause.
+- **Why it may have happened (hypothesis):** the features that matter (past yields) are already known pre-season, and the in-season satellite and weather features add little at district scale (see ablation).
 
 ## Ablation and SHAP
 *Source: kernel `paddy-04-ablation-shap` v1, commit `cd8d7da`; `RESULTS.md` §9.*

@@ -129,3 +129,8 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - Fix after the run (presentation only, no numbers changed):
   - The SHAP figure legend showed default colours, so it was redrawn locally from `shap_feature_importance.csv` with `redraw_shap_figure`.
   - `ablation.md` printed R² with 1 decimal, so it was regenerated from `ablation.csv` after `to_markdown` gained 3-decimal formatting for R²-type columns.
+
+## Task E3 — kernel 03 run (2026-10-18)
+- Kernel `imalkaperera/paddy-03-earliness` v1 (CPU, internet off), 4,581 s, code COMMIT `cd8d7da`, data v2. The log ends with "experiment 03 complete".
+- The log is large (8.9 MB) because of 8,034 repeated scikit-learn warnings: "Skipping features without any observed values" (`SimpleImputer`). At long leads, the late-season blocks (b4, b5) do not exist yet, so those columns are entirely empty and the imputer drops them. This is expected behaviour, not an error.
+- The `.md` tables were regenerated locally from the `.csv` files with 3-decimal R² (presentation only).
