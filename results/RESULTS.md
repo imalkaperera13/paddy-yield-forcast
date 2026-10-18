@@ -74,3 +74,18 @@ RMSE, kg/ha:
 In this table, RF = random forest and hybrid = hybrid_lgbm.
 
 Errors rise after the merge in **both** affected and other districts. Most of the rise is therefore a period effect (the post-merge period includes the 2021–22 fertiliser-ban seasons), not a merge effect alone. In the affected districts the rise is larger: about 2.0× vs 1.3× for the baseline. That is consistent with an added break from the merge, but it rests on only 64 and 68 rows, so it is not conclusive.
+
+## 7. Shock seasons (`shock_seasons.md`, figure `shock_bias_by_season.png`)
+Computed locally by `python -m src.analysis.shocks` from the kernel-01 v2 predictions (seed-averaged); no new training. Bias = mean(predicted − observed); positive means over-forecast.
+
+| shock group (seasons) | n | baseline RMSE / bias | RF RMSE / bias | ridge RMSE / bias |
+|---|---|---|---|---|
+| policy/economic, named (Maha 2021/22, Yala 2022, Maha 2022/23) | 74 | 1142.6 / +986.9 | 1170.2 / +923.3 | 1197.1 / +940.1 |
+| weather, named (Maha 2010/11 floods) | 25 | 773.9 / +492.4 | 936.8 / +720.9 | 959.1 / +790.5 |
+| data-chosen, cause unverified (Maha 2023/24, Yala 2023, Maha 2024/25) | 74 | 411.7 / +223.2 | 399.0 / +48.9 | 437.8 / +96.1 |
+| all other test seasons | 635 | 521.0 / −162.4 | 499.1 / −109.0 | 513.8 / −78.1 |
+
+- Every model over-forecasts the fertiliser-ban seasons badly: by about 1,400–1,560 kg/ha in Maha 2021/22, about half the observed mean of 2,853. The features carry no fertiliser information, so this is expected; it is a structural limit of weather- and satellite-based forecasting.
+- **2010/11 Maha floods:** all models over-forecast *more* than the baseline (RF bias +721 vs +492). The rainfall and NDVI features did not warn of the flood loss at lead 0. Why is open: the flood came late in the season (Jan–Feb 2011) and may be poorly captured by 4-week district-mean rainfall; this is a hypothesis.
+- **Recovery season (Maha 2022/23):** RF and ridge beat the baseline clearly (RMSE 389 and 344 vs 587). The baseline still averages in the ban year, whereas the models do not depend on it alone.
+- Shock-season choice: the named seasons were fixed before looking at errors. The data-chosen seasons are the 3 largest other negative national yield anomalies vs the previous 10 same seasons (`shock_season_list.csv`).

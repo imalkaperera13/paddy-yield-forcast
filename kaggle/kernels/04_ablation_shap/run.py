@@ -66,5 +66,7 @@ info = banner(DATA_SLUG, code_commit=commit, data_dir=data_dir)
 out = output_dir(EXPERIMENT)
 (out / "run_info.json").write_text(__import__("json").dumps(info, indent=2))
 
-# Wired up when the corresponding task is implemented. Nothing is faked meanwhile.
-raise NotImplementedError("Experiment '04_ablation_shap' is not implemented yet.")
+print("data dir:", data_dir)
+from src.experiments.ablation import main  # noqa: E402
+
+main(data_dir, out)

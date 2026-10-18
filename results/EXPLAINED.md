@@ -37,7 +37,11 @@ _pending (Task 8)_
 _pending (Task 9)_
 
 ## Shock seasons
-_pending (Task 10)_
+*Source: kernel-01 v2 predictions, analysed locally (`src/analysis/shocks.py`); `RESULTS.md` §7.*
+- **What it shows:** the error in seasons with unusually low national yield, compared with ordinary test seasons.
+- **How to read it:** look at the bias column. A large positive bias means the forecast missed a collapse.
+- **What it does not prove:** that the models "cannot" forecast shocks. There are only 4 named shock seasons (99 rows), and the causes of the data-chosen ones are not verified.
+- **Why it may have happened (hypotheses):** the 2021/22 losses came from a fertiliser policy that is absent from every input. The 2010/11 flood loss was not visible in district-mean rainfall/NDVI at the reference harvest date.
 
 ## Per-district error map, yield-trend plots, validation scheme diagram
 _pending_

@@ -70,6 +70,12 @@ def prepare_data(cfg: dict) -> None:
     for extra in extras:
         if (ROOT / extra).exists():
             shutil.copy2(ROOT / extra, out / Path(extra).name)
+    # earliness / window-shift feature tables (flat: Kaggle flattens sub-folders anyway)
+    vdir = ROOT / "data" / "processed" / "variants"
+    variants = sorted(vdir.glob("master_lead*_shift*.parquet"))
+    for v in variants:
+        shutil.copy2(v, out / v.name)
+    print(f"{len(variants)} variant tables included")
     manifest = {
         "file": src.name,
         "sha256": _sha256(src),

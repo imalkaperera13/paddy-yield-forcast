@@ -66,5 +66,6 @@ info = banner(DATA_SLUG, code_commit=commit, data_dir=data_dir)
 out = output_dir(EXPERIMENT)
 (out / "run_info.json").write_text(__import__("json").dumps(info, indent=2))
 
-# Wired up when the corresponding task is implemented. Nothing is faked meanwhile.
-raise NotImplementedError("Experiment '05_shock' is not implemented yet.")
+# Shock-season evaluation needs no training: it reads saved predictions and runs locally
+# with `python -m src.analysis.shocks` (see docs/decisions.md, Task E5).
+raise SystemExit("Not a Kaggle step: run python -m src.analysis.shocks locally.")
