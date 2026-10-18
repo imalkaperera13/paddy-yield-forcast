@@ -147,3 +147,8 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
   - `validation_scheme.png`, drawn from `validation_folds_lead0.csv`;
   - `district_error_map.png`, per-district RMSE of the seed-averaged kernel-01 predictions, with the HDX boundaries simplified for Earth Engine.
 - Kernel 05 is now `paddy-05-final-model` (final fits). The old shock-test kernel stub was removed because shock analysis needs no training.
+
+## Task E5 — kernel 05 final models (2026-10-18)
+- Kernel `imalkaperera/paddy-05-final-model` v1 (CPU, internet off), 74 s, code COMMIT `868c55f` (code dataset v3), data v2. The log ends with "experiment 05 complete".
+- Both random forests were tuned to `min_samples_leaf` 15 and `max_features` 0.5, and trained on 1,266 rows. Conformal q (α = 0.1, calibration harvest years 2024–2026, 123 rows): 910.6 kg/ha (all features) and 817.5 kg/ha (lagged + MODIS).
+- `models/final_models.json` and `models/model_card.md` are in git. The `.joblib` files are excluded by `.gitignore`; they are in the kernel output and `results/kaggle_runs/05_final_model/` on the PC.
