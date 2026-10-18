@@ -141,12 +141,18 @@ def baseline_check(df: pd.DataFrame) -> None:
     assert BASELINE_COL in df, "baseline column missing"
 
 
+THREE_DP = {"r2", "coverage", "share", "rank_biserial_r", "share_rows_better"}
+
+
 def to_markdown(df: pd.DataFrame, floatfmt: str = ".1f") -> str:
-    def fmt(v):
+    def fmt(v, col):
         if isinstance(v, float):
-            return "" if np.isnan(v) else format(v, floatfmt)
+            f = ".3f" if col in THREE_DP and floatfmt == ".1f" else floatfmt
+            return "" if np.isnan(v) else format(v, f)
         return str(v)
-    head = "| " + " | ".join(df.columns) + " |"
-    sep = "|" + "---|" * len(df.columns)
-    body = ["| " + " | ".join(fmt(v) for v in r) + " |" for r in df.itertuples(index=False)]
+    cols = list(df.columns)
+    head = "| " + " | ".join(cols) + " |"
+    sep = "|" + "---|" * len(cols)
+    body = ["| " + " | ".join(fmt(v, c) for v, c in zip(r, cols, strict=True)) + " |"
+            for r in df.itertuples(index=False)]
     return "\n".join([head, sep, *body])

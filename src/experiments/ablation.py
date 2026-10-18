@@ -76,9 +76,10 @@ def shap_figure(imp: pd.DataFrame, group_of: dict, out: Path, dpi: int, top: int
     ax.grid(axis="x", color="#e4e3de", linewidth=0.6)
     ax.barh(t.feature, t.mean_abs_shap, height=0.6,
             color=[gcol.get(group_of.get(f, ""), MUTED) for f in t.feature])
-    for g, c in gcol.items():
-        ax.barh([], [], color=c, label=g)
-    ax.legend(frameon=False, fontsize=8, loc="lower right")
+    from matplotlib.patches import Patch
+    shown = [g for g in gcol if g in {group_of.get(f) for f in t.feature}]
+    ax.legend(handles=[Patch(color=gcol[g], label=g) for g in shown], frameon=False, fontsize=8,
+              loc="lower right")
     ax.set_xlabel("mean |SHAP| (kg/ha)", color=MUTED, fontsize=9)
     ax.tick_params(axis="y", labelsize=7)
     ax.set_title(f"Random forest: top {top} features by mean |SHAP| over all test rows",
@@ -86,6 +87,12 @@ def shap_figure(imp: pd.DataFrame, group_of: dict, out: Path, dpi: int, top: int
     fig.tight_layout()
     fig.savefig(out, dpi=dpi, facecolor=SURFACE)
     plt.close(fig)
+
+
+def redraw_shap_figure(imp_csv: Path, out: Path, dpi: int = 300) -> None:
+    """Re-plot the SHAP bar chart from a saved shap_feature_importance.csv (no recomputation)."""
+    imp = pd.read_csv(imp_csv)
+    shap_figure(imp, dict(zip(imp.feature, imp.group, strict=True)), out, dpi)
 
 
 def main(input_dir: Path, out_dir: Path) -> None:

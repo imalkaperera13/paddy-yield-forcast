@@ -39,7 +39,16 @@ For each item, the explanation covers:
 _pending (Task 8)_
 
 ## Ablation and SHAP
-_pending (Task 9)_
+*Source: kernel `paddy-04-ablation-shap` v1, commit `cd8d7da`; `RESULTS.md` §9.*
+- **What it shows:** how much each data source contributes. Ablation measures what is lost or gained when a group is removed or added, scored on the same 808 rows. SHAP measures how much each feature moves the predictions.
+- **How to read it:** compare each RMSE with the baseline (606) and with 'all' (606), and check the Wilcoxon p (Holm). A large SHAP value means the model relies on that feature; it does **not** mean the feature improves accuracy.
+- **Result:**
+  - Past yields carry about 77% of the SHAP weight, and without them the model is far worse (RMSE 683).
+  - MODIS is the only other group whose removal significantly hurts (p (Holm) = 0.037).
+  - Lagged yield + MODIS gives the lowest RMSE (596) but is not significantly better than the baseline after correction.
+  - The 66 temperature/radiation features take 13% of SHAP weight yet add no accuracy, which suggests the model fits noise in them.
+- **What it does not prove:** that weather does not matter for paddy. District-season averages at about 11 km (ERA5) and about 5 km (CHIRPS) may be too coarse. The cropland mask under-covers wet-zone paddy. Irrigation, which covers much of the dry zone, buffers the rainfall signal. One seed only.
+- **Why it may have happened (hypotheses):** most of the variance is between districts and slow (trend), and the baseline already captures it. Year-to-year weather effects are small relative to label noise and the policy shock.
 
 ## Shock seasons
 *Source: kernel-01 v2 predictions, analysed locally (`src/analysis/shocks.py`); `RESULTS.md` §7.*

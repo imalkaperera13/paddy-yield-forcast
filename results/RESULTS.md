@@ -117,3 +117,29 @@ Target: 90% intervals (α = 0.1).
 - **Intervals are wide:** about ±950 kg/ha, roughly ±24% of mean yield. After the crisis seasons enter the calibration window, intervals widen further: mean width rises from about 1,500 kg/ha (test seasons up to 2019) to about 2,900–3,260 kg/ha (from 2022/23 Maha), and coverage there is 96–100%.
 - **Per-season (Mondrian) calibration** did not improve overall coverage. It does balance the two seasons for the baseline: Maha rises from 0.85 to 0.87, and Yala falls from 0.90 to 0.88.
 - **Point accuracy of the models fitted without the calibration years:** RMSE 607 (RF), 599 (ridge), 606 (baseline). These are close to kernel 01's values.
+
+## 9. Feature-group ablation and SHAP (`ablation.md`, `ablation_wilcoxon.md`, `shap_group_importance.md`, figure `shap_top_features.png`)
+- **Source:** Kaggle kernel `imalkaperera/paddy-04-ablation-shap` v1, commit `cd8d7da`, data `paddy-master-table` v2; 2,589 s.
+- **Setup:** random forest, seed 42, lead 0, the same 808 test rows. Each variant is tuned inside each training window as in kernel 01.
+
+| feature set | features | RMSE | MAE | R² |
+|---|---|---|---|---|
+| lagged yield + MODIS | 40 | 596.4 | 430.4 | 0.535 |
+| all minus temperature/radiation | 54 | 600.7 | 432.1 | 0.529 |
+| lagged yield only | 9 | 602.9 | 435.3 | 0.525 |
+| **baseline (last-5 mean)** | 0 | 605.8 | 442.7 | 0.521 |
+| all | 120 | 605.8 | 436.9 | 0.521 |
+| all minus rainfall | 106 | 608.2 | 438.5 | 0.517 |
+| lagged yield + rainfall | 23 | 608.6 | 438.2 | 0.516 |
+| all minus MODIS | 89 | 610.1 | 439.4 | 0.514 |
+| lagged yield + temperature/radiation | 75 | 611.5 | 440.0 | 0.512 |
+| no lagged yield (satellite + climate only) | 111 | 682.5 | 527.0 | 0.391 |
+
+Paired Wilcoxon tests, Holm-adjusted over all 17 comparisons:
+- **Removing MODIS significantly worsens the full model:** r = −0.12, p (Holm) = 0.037. No other group has a significant effect.
+- **The best variant, lagged yield + MODIS, still does not significantly beat the baseline:** r = +0.10, p (Holm) = 0.25. Its raw p is 0.019, so the gain may be real but small.
+- **Dropping the lagged yields** makes the model much worse than both the baseline and 'all' (r = −0.26 and −0.30; p (Holm) < 1e-8).
+
+**SHAP**, share of total mean |SHAP|: lagged yield 76.6% (9 features), temperature/radiation 13.0% (66 features), MODIS 7.0% (31), rainfall 3.4% (14). The top features are the last-5 mean (230 kg/ha mean |SHAP|), the trend (134), the previous same-season yield (106) and the long-term mean (84). The strongest non-yield feature is pre-season rainfall (7 kg/ha).
+
+**Reading:** almost all of the predictive skill comes from each district's own yield history. MODIS vegetation is the only satellite/climate group with a measurable, but small, contribution. Rainfall and temperature/radiation add noise rather than skill at lead 0.

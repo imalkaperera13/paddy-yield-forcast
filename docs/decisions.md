@@ -123,3 +123,9 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 ## Task E2 — kernel 02 run (2026-10-18)
 - Kernel `imalkaperera/paddy-02-conformal` v1, CPU, internet off. Inputs: `paddy-master-table` v2 and `paddy-yield-code` v2 (COMMIT `cd8d7da`). The run log ends with "experiment 02 complete". Outputs are in `results/tables/conformal_*`, `predictions_conformal.csv` and `results/figures/conformal_*.png`; run metadata is in `results/runs_meta/02_conformal/`.
 - Result summary in `results/RESULTS.md` §8. The shock-split coverage (90–92% outside, 56–60% inside the 4 named shock seasons) was computed locally from `predictions_conformal.csv`. The shock seasons are the ones fixed in `configs/config.yaml` before any interval was seen.
+
+## Task E4 — kernel 04 run (2026-10-18)
+- Kernel `imalkaperera/paddy-04-ablation-shap` v1 (CPU, internet off), 2,589 s, code COMMIT `cd8d7da`, data v2. The log ends with "experiment 04 complete". Outputs: `results/tables/ablation*`, `shap_*`; `results/runs_meta/04_ablation_shap/`.
+- Fix after the run (presentation only, no numbers changed):
+  - The SHAP figure legend showed default colours, so it was redrawn locally from `shap_feature_importance.csv` with `redraw_shap_figure`.
+  - `ablation.md` printed R² with 1 decimal, so it was regenerated from `ablation.csv` after `to_markdown` gained 3-decimal formatting for R²-type columns.
