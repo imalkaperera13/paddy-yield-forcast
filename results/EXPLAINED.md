@@ -28,7 +28,12 @@ For each item, the explanation covers:
 - **What it does not prove:** that the models are *equal* to the baseline. A non-significant test is not evidence of equivalence. The rows are also not fully independent, because districts in the same season share weather.
 
 ## Conformal coverage and interval width
-_pending (Task 7)_
+*Source: kernel `paddy-02-conformal` v1, commit `cd8d7da`; `RESULTS.md` §8.*
+- **What it shows:** whether the "90%" intervals contain the observed yield about 90% of the time on future seasons, and how wide they are.
+- **How to read it:** coverage near 0.90 means the intervals are calibrated. Lower coverage means overconfident intervals, and higher means needlessly wide ones. Width says how useful they are: ±950 kg/ha is about ±24% of mean yield.
+- **Result:** 86–88% overall. Outside the 4 named shock seasons it is 90–92%; inside them it is 56–60%.
+- **What it does not prove:** that the guarantee holds. Split conformal's guarantee assumes the calibration and test seasons are exchangeable. Yield seasons are not exchangeable: there is trend, and there are policy shocks. This is why coverage fails exactly where the season is unlike the calibration years.
+- **Why it may have happened:** a shock season produces errors larger than any in the 3 calibration years, so the intervals are too narrow. Once the shock years enter calibration, intervals become very wide (≈2,900–3,260 kg/ha) and over-cover for several seasons. Possible fixes, not tested: adaptive conformal methods that update after each season, or a longer or weighted calibration window.
 
 ## Earliness curve
 _pending (Task 8)_

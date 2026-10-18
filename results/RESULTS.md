@@ -89,3 +89,31 @@ Computed locally by `python -m src.analysis.shocks` from the kernel-01 v2 predic
 - **2010/11 Maha floods:** all models over-forecast *more* than the baseline (RF bias +721 vs +492). The rainfall and NDVI features did not warn of the flood loss at lead 0. Why is open: the flood came late in the season (Jan–Feb 2011) and may be poorly captured by 4-week district-mean rainfall; this is a hypothesis.
 - **Recovery season (Maha 2022/23):** RF and ridge beat the baseline clearly (RMSE 389 and 344 vs 587). The baseline still averages in the ban year, whereas the models do not depend on it alone.
 - Shock-season choice: the named seasons were fixed before looking at errors. The data-chosen seasons are the 3 largest other negative national yield anomalies vs the previous 10 same seasons (`shock_season_list.csv`).
+
+## 8. Conformal prediction intervals (`conformal_coverage.md`, figures `conformal_reliability.png`, `conformal_coverage_by_season.png`)
+- **Source:** Kaggle kernel `imalkaperera/paddy-02-conformal` v1, code and data commit `cd8d7da`, data `paddy-master-table` v2 (master SHA-256 `2a8fdc80…`). Seed 42, lead 0, the same 808 test rows.
+- **Method:** split conformal. The calibration set is the last 3 harvest years of each training window; the model is tuned and fitted on the older years only.
+
+Target: 90% intervals (α = 0.1).
+
+| model | variant | coverage | mean width (kg/ha) | width as % of mean yield |
+|---|---|---|---|---|
+| baseline | standard | 0.873 | 1,901 | 47.9 |
+| baseline | per-season | 0.875 | 1,944 | 49.0 |
+| random forest | standard | 0.861 | 1,898 | 47.9 |
+| random forest | per-season | 0.861 | 1,960 | 49.4 |
+| ridge | standard | 0.877 | 2,097 | 52.9 |
+| ridge | per-season | 0.873 | 2,082 | 52.5 |
+
+**Coverage of the standard 90% intervals, split by the 4 shock seasons named in advance** (Maha 2010, Maha 2021, Yala 2022, Maha 2022):
+
+| model | outside shocks (709 rows) | in shock seasons (99 rows) |
+|---|---|---|
+| baseline | 0.911 | 0.596 |
+| random forest | 0.903 | 0.566 |
+| ridge | 0.922 | 0.556 |
+
+- **Overall:** coverage falls slightly short of 90% (86–88%). The whole shortfall comes from the shock seasons. Outside them, coverage is at or above the target.
+- **Intervals are wide:** about ±950 kg/ha, roughly ±24% of mean yield. After the crisis seasons enter the calibration window, intervals widen further: mean width rises from about 1,500 kg/ha (test seasons up to 2019) to about 2,900–3,260 kg/ha (from 2022/23 Maha), and coverage there is 96–100%.
+- **Per-season (Mondrian) calibration** did not improve overall coverage. It does balance the two seasons for the baseline: Maha rises from 0.85 to 0.87, and Yala falls from 0.90 to 0.88.
+- **Point accuracy of the models fitted without the calibration years:** RMSE 607 (RF), 599 (ridge), 606 (baseline). These are close to kernel 01's values.
