@@ -17,6 +17,7 @@ FILES = {
     "selected_districts.csv": "data/processed/selected_districts.csv",
     "mask_validation.csv": "results/tables/mask_validation.csv",
     "mask_static_validation.csv": "results/tables/mask_static_validation.csv",
+    "feature_list.json": "data/processed/feature_list.json",
 }
 META = {
     "district": "district name (DCS)", "adm2_pcode": "district code",
