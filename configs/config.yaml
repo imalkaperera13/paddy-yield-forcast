@@ -32,6 +32,8 @@ data:
   # Diagnostics only (never a feature). ASSUMPTION from geography, to confirm: Mahaweli
   # System H lies in Anuradhapura; Udawalawe spans Ratnapura, Monaragala, Hambantota.
   mahaweli_affected_districts: [ANURADHAPURA, RATNAPURA, MONARAGALA, HAMBANTOTA]
+  # Step 1 (2026-11-05): study districts, from data/processed/selected_districts.csv
+  selected_districts_file: data/processed/selected_districts.csv
 
 # Columns that must NEVER be model features (enforced by tests/test_features.py).
 # Target-season production/extent leak the answer; mahaweli_merged ~ a time dummy.
@@ -68,6 +70,29 @@ features:
     dataset: ESA/WorldCover/v200
     class_value: 40             # cropland, used as a documented paddy proxy
     min_fraction: 0.5           # MODIS 250 m pixel counts as cropland if >= 50% of its 10 m cells are class 40
+  # Step 2: active paddy mask (Xiao et al., 2005 style, simplified). One mask per season.
+  # Thresholds are fixed BEFORE comparing with DCS sown extent and are not tuned on DCS,
+  # so the DCS comparison stays an independent check. Windows are days from the season
+  # anchor in season_calendar.
+  paddy_mask:
+    collection: MODIS/061/MOD09A1      # 8-day surface reflectance, 500 m (has the SWIR band for LSWI)
+    cropland_min_fraction: 0.5         # same WorldCover class-40 rule as the pilot, on the 500 m grid
+    flood_window_days: [-30, 75]       # flooding / transplanting
+    grow_window_days: [30, 140]        # green-up to peak
+    harvest_window_days: [100, 180]    # harvest and post-harvest
+    flood_lswi_margin: 0.05            # flooded if LSWI + margin >= EVI (Xiao et al., 2005)
+    flood_evi_max: 0.35                # ...and EVI below this (bare or flooded, not dense vegetation)
+    peak_evi_min: 0.35                 # crop must reach this EVI in the grow window
+    greenup_amplitude_min: 0.20        # grow-window max EVI minus flood-window min EVI
+    harvest_drop_min: 0.20             # grow-window max EVI minus harvest-window min EVI
+    # Step 3: leakage-free STATIC mask for features. The seasonal mask above uses the
+    # season's own cycle (after the forecast cutoff), so it is never used for features.
+    static:
+      years: [2000, 2008]              # source seasons (season_year), same season type only
+      first_test: {season: Maha, season_year: 2009}   # first forward-chaining test season (pilot fold 0)
+      k: auto                          # pixel kept if detected in >= k of the source seasons;
+                                       # auto = rule in src/data/static_mask.py (DCS sown 2000-2008 only)
+      asset_root: projects/paddy-yield-ee/assets/paddycast
   satellite_start_dates:
     sentinel2: "2017-03-28"
     sentinel1: "2014-10-03"

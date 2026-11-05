@@ -1,0 +1,17 @@
+{
+  "id": "<USERNAME>/paddy-06a-masked-models",
+  "title": "paddy-06a-masked-models",
+  "code_file": "run.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "<USERNAME>/paddycast-masked",
+    "<USERNAME>/paddy-yield-code"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

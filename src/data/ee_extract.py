@@ -107,13 +107,41 @@ def to_fc(ee, gdf):
     return ee.FeatureCollection(json.loads(gdf[["adm2_pcode", "geometry"]].to_json()))
 
 
+# Errors that repeat exactly on every attempt: retrying only wastes time and quota.
+DETERMINISTIC_EE_ERRORS = (
+    "Reprojection output too large",
+    "Too many input pixels",
+    "Too many pixels in the region",
+    "Image.select: Pattern",
+    "not found",
+    "Invalid argument",
+    "Parameter",
+)
+
+
+class DeterministicEEError(RuntimeError):
+    """An Earth Engine error that will not go away by retrying."""
+
+
+def is_deterministic(msg: str) -> bool:
+    return any(p.lower() in msg.lower() for p in DETERMINISTIC_EE_ERRORS)
+
+
 def get_with_retry(obj, what: str, tries: int = 4):
+    """getInfo() with back-off for transient errors (timeouts, quota, 5xx).
+
+    Deterministic errors (see DETERMINISTIC_EE_ERRORS) fail on the first attempt.
+    """
     for k in range(tries):
         try:
             return obj.getInfo()
-        except Exception as e:  # EE raises EEException / HttpError; retry all
+        except Exception as e:  # EE raises EEException / HttpError
+            msg = str(e)
+            if is_deterministic(msg):
+                log(f"  {what}: deterministic error, not retrying ({msg[:200]})")
+                raise DeterministicEEError(f"{what}: {msg}") from e
             wait = 15 * (2 ** k)
-            log(f"  {what}: attempt {k + 1} failed ({str(e)[:160]}); retry in {wait}s")
+            log(f"  {what}: attempt {k + 1} failed ({msg[:160]}); retry in {wait}s")
             time.sleep(wait)
     raise RuntimeError(f"{what}: giving up after {tries} attempts")
 

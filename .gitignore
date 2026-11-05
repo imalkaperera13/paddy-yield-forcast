@@ -49,3 +49,4 @@ results/runs/
 setup_log.txt
 requirements-freeze.txt
 *.joblib
+kaggle_dataset/

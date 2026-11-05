@@ -152,3 +152,82 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - Kernel `imalkaperera/paddy-05-final-model` v1 (CPU, internet off), 74 s, code COMMIT `868c55f` (code dataset v3), data v2. The log ends with "experiment 05 complete".
 - Both random forests were tuned to `min_samples_leaf` 15 and `max_features` 0.5, and trained on 1,266 rows. Conformal q (α = 0.1, calibration harvest years 2024–2026, 123 rows): 910.6 kg/ha (all features) and 817.5 kg/ha (lagged + MODIS).
 - `models/final_models.json` and `models/model_card.md` are in git. The `.joblib` files are excluded by `.gitignore`; they are in the kernel output and `results/kaggle_runs/05_final_model/` on the PC.
+
+## Step 1 — study districts (2026-11-05)
+- **Why:** supervisor feedback (27 Oct 2026). Small, terraced fields in hilly areas give mixed satellite signals, so the project starts with large, flat paddy districts.
+- **Inputs:** DCS sown extent (`data/interim/dcs_yield_tidy.csv`, as published) and SRTM 30 m slope over ESA WorldCover v200 cropland (`scripts/district_slope.py`, 90 m, run 2026-11-05 → `data/interim/ee/district_slope.csv`).
+- **Rules** (`scripts/select_districts.py`):
+  - mean annual sown extent (Maha + Yala) over harvest years 2016–2025 **≥ 50,000 ha**;
+  - mean cropland slope ≤ 3° and share of cropland steeper than 5° ≤ 0.10;
+  - dry or intermediate zone.
+- **Selected (7):** Anuradhapura, Ampara, Kurunegala, Polonnaruwa, Batticaloa, Hambantota, Trincomalee → `data/processed/selected_districts.csv`; all 25 districts with every criterion in `results/tables/district_screening.csv`.
+- **Kurunegala is intermediate zone, not dry zone.** It is kept because it passes the area and flatness rules (126,157 ha/year; mean cropland slope 1.87°), and the user confirmed it.
+- **Monaragala** (dry zone, flat: 1.79°) is excluded only because its mean annual sown extent is **49,176 ha**, 824 ha below the 50,000 ha cutoff. It is the first district to add if the study is widened.
+- ASSUMPTION: the dry-zone list in `select_districts.py` comes from general agro-climatic zoning and was not checked against an official zone map in this repo.
+- Anuradhapura and Hambantota are in `mahaweli_affected_districts`; their DCS rows follow the pilot's Mahaweli handling, which should be kept in mind when comparing mask area with DCS sown extent.
+- The pilot models (25 districts) are unchanged; later steps compare results on the 7 districts.
+
+## Step 2 — seasonal active paddy mask (2026-11-05)
+- **Code:** `src/data/paddy_mask.py` (Earth Engine, one request per season for the 7 districts, resumable, retry on timeout) and `scripts/mask_validation.py` (offline comparison with DCS).
+- **Method:** a simplified version of Xiao et al. (2005) on MODIS MOD09A1 v061 (8-day surface reflectance, 500 m), because MOD13Q1 has no 1.6 µm SWIR band for LSWI. The mask is evaluated on the MODIS 250 m (MOD13Q1) grid, so each 500 m index value covers four 250 m cells. Clear observations only (StateQA cloud state clear, no shadow). Inside WorldCover class-40 cropland (≥ 50% of the 250 m pixel, the pilot's `cropland_fraction`). Per season, a pixel is active paddy if it shows:
+  1. **flooding** in the flood window (anchor −30 to +75 days): at least one observation with LSWI + 0.05 ≥ EVI and EVI < 0.35;
+  2. **green-up** in the grow window (+30 to +140 days): max EVI ≥ 0.35 and max EVI − flood-window min EVI ≥ 0.20;
+  3. **harvest drop** in the harvest window (+100 to +180 days): grow max EVI − harvest-window min EVI ≥ 0.20.
+- **Variants:** *strict* applies all three rules; *relaxed* also accepts rule 1 where the pixel has no clear flood-window observation (Maha is often cloudy at transplanting). `flood_clear_share` records how much of the cropland had at least one clear flood-window observation.
+- **No tuning on DCS:** windows and thresholds are in `configs/config.yaml` (`features.paddy_mask`) and were fixed before any comparison with DCS, so the DCS check is independent. Any later change must be logged here with the reason.
+- **Validation:** mask area is compared with DCS sown extent **per season** (Maha and Yala separately), never with the annual Maha + Yala total. Metrics per district × season: Pearson and Spearman r across years, median mask/DCS ratio, bias %, MAPE %, MAE (ha).
+- **Known limits:** 500 m pixels still mix paddy with other land at field edges; DCS sown extent is itself an estimate; the mask is a single-sensor rule set with fixed thresholds.
+- **Fix (2026-11-05):** the first run failed on every attempt with the deterministic Earth Engine error "Reprojection output too large (14025x7353 pixels)". Cause: the WorldCover 10 m layer was averaged to a 500 m grid (2,500 input pixels per output pixel) and the area sums were requested without an explicit scale. Changes:
+  - cropland now uses the pilot's `cropland_fraction` on the 250 m grid (625 input pixels per output pixel, under the 1,024 limit);
+  - every reduction passes `scale=250` with the MODIS crs and `tileScale=8`; no other image is reprojected;
+  - `get_with_retry` now fails fast on deterministic errors (`DETERMINISTIC_EE_ERRORS`) and still retries timeouts and quota errors;
+  - a test mode (`--districts LK72 --season Maha --seasons 2020-2020`) writes to `data/interim/ee/mask_test/` and every run checks that mask area ≤ cropland area.
+- **Run result (2026-11-05), seasonal mask accepted as a detector, strict variant** (relaxed is nearly identical: flood-window clear share ≈ 1.00, so cloud is not the limit). From `results/tables/mask_validation.csv`, 52 seasons × 7 districts, 2000–2025:
+  - **(a) It is a conservative core-paddy mask, not an area map.** Median mask area is 37% of DCS sown area (bias −64.5%, n = 364). Pooled Pearson r = 0.50 (Maha 0.38, Yala 0.60). The weakest agreement is Kurunegala (Maha r 0.46, Yala median ratio 0.06) and Batticaloa Maha (r 0.49, ratio 0.16); the best is Polonnaruwa Yala (r 0.90) and Trincomalee Yala (r 0.89). WorldCover cropland on the 250 m grid is itself smaller than the largest DCS sown area in several districts (e.g. Anuradhapura 94,881 ha vs Maha maximum 127,517 ha; Kurunegala 54,127 ha vs 82,478 ha), so the mask cannot reach DCS area there. Possible causes (not tested): paddy mapped to other WorldCover classes, the 50% cropland-fraction rule, mixed 500 m pixels.
+  - **(b) Leakage: the seasonal mask must NOT be used for features.** The mask for season t uses season t's own flooding, green-up and harvest, all after the 12/8/4-week forecast cutoffs. It is kept only as a detector and for the area check above.
+
+## Step 3 — leakage-free static mask and masked features (2026-11-05)
+- **Static mask** (`src/data/static_mask.py`): a pixel is paddy for season type s if the strict seasonal rules detected it in at least k of the 9 same-season source seasons 2000–2008 (`features.paddy_mask.static.years`). All source seasons are strictly before the first forward-chaining test season, Maha 2009/10 (pilot fold 0, checked by a test). Separate masks for Maha and Yala.
+- **Choosing k** (no yields): from the detection-frequency table (`data/interim/ee/mask/static_freq.csv`), k is the value whose pooled static-mask area over the 7 districts is closest to the pooled mean DCS sown extent of the same season in the **source years only** (2000–2008). Ties go to the larger k. The chosen k and the full k table are in `data/interim/ee/mask/static_k.json`. Can be fixed in config.
+- **Assets:** the masks are exported as Earth Engine assets under `projects/paddy-yield-ee/assets/paddycast/` on the MODIS 250 m grid with mean pyramids. MODIS features use the 0/1 mask exactly; CHIRPS (5.5 km) and ERA5-Land (11 km) read it as the paddy-area fraction of each coarse pixel, so their district means are paddy-area weighted (the pilot used plain district means for these).
+- **Validation:** static mask area vs DCS sown extent per district and season, mean ratio over 2000–2025 and separately for the source years and after → `results/tables/mask_static_validation.csv`.
+- **Features** (`src/data/ee_extract_masked.py`, `src/data/build_masked_features.py`): the pilot's `features.py` is reused unchanged, so the cutoff, latency, past-only anomaly and label-publication rules are identical. Leads 12, 8, 4 weeks → `data/processed/masked/features_lead{L}.parquet`. Maha rows use the Maha mask, Yala rows the Yala mask. The unmasked pilot features for the same leads remain in `data/processed/variants/` for comparison.
+- **Leakage tests** (`tests/test_static_mask.py`): source seasons are strictly before the first test season; the first test season matches the pilot's fold 0; source years past the first test season are rejected; the Earth Engine graph is built only from source seasons; the k rule ignores yields and post-source years.
+- **Not done yet:** a rolling mask (seasons t−5 to t−1) is optional and not built.
+
+## Step 4 — master tables and leakage tests (2026-11-05)
+- **Tables** (`src/data/build_master_masked.py`): `data/processed/master_masked.parquet` (static-mask features) and `data/processed/master_unmasked_7d.parquet` (pilot WorldCover-cropland features), one row per district × season × lead_weeks (12, 8, 4) for the 7 study districts, every row with a DCS yield. Both tables have exactly the same rows, so Step 6 compares masked vs unmasked on identical folds and seeds. Columns `mask` and `lead_weeks` identify the variant; `mahaweli_affected` and `diag_post_merge_affected` are added as in the pilot.
+- **Lagged yield features** (`y_prev_same`, `y_mean_same`, `y_last5_same`, `y_trend_same`, `y_last_avail`, `y_last_avail_age_days`, `sown_prev_same`, `harv_ratio_prev_same`, `n_label_hist_same`) come from the pilot `features.py`: previous seasons only, and only once that season's DCS figure counts as published at the forecast date (harvest reference + 6 months). They do not depend on the mask; the build checks they match the unmasked table (largest difference 1.5e-10 in `y_trend_same`, float noise, so the check uses atol 1e-6).
+- **Forbidden columns** (`production_t`, `sown_ha`, `harvested_ha` of the target season) are checked absent.
+- **Leakage tests on the real data** (`tests/test_leakage_masked.py`, skipped if the tables or masked series are missing):
+  1. one row per district × season × lead; masked and unmasked rows identical; `forecast_date` = harvest reference − lead;
+  2. **no data after the cutoff:** sampled rows rebuilt from series truncated at the forecast date (CHIRPS pentad end ≤ cutoff, MODIS composite end ≤ cutoff, ERA5 day < cutoff) equal the full-series rebuild and the stored row;
+  3. **no future-season yield:** replacing every DCS label not yet published at the forecast date (asserted to include the target season and all later seasons) with random numbers changes no feature;
+  4. MODIS anomalies equal value − mean of strictly earlier years of the same district, season and lead.
+- **Negative control:** adding noise to stored `rain_b1` and `ndvi_b1_anom` makes tests 2 and 4 fail, so the tests can detect a change.
+
+## Step 6 — training design, fixed before any full run (2026-11-05)
+- **Code:** `src/experiments/masked_compare.py`, reusing the pilot's `run_model`, tuning grids, inner time splits, splitters, conformal quantile and SHAP code. Two private Kaggle kernels, CPU only, no internet: `06a_masked_models` (stage `models`) and `06b_masked_followups` (stage `followups`). Tables come from the saved predictions with the `report` stage, run locally, with no training.
+- **Data:** private dataset `imalkaperera/paddycast-masked` (`master_masked.parquet`, `master_unmasked_7d.parquet`, `feature_list.json`). The 120 features are the pilot's four groups (lagged_yield, rainfall, modis, temp_radiation) plus `is_maha`.
+- **Same folds, same seeds:** masked and unmasked tables have identical rows. Folds depend only on season, year and the label-publication rule, so both variants get exactly the same train/test indices at each lead (`tests/test_masked_compare.py`). Seeds: 42, 7, 123, 2024, 31337. Grids are those in `src/models/registry.py`.
+- **Folds per lead:** forward chaining at leads 12, 8 and 4. Each lead has its own forecast date, so its own label-availability rule. 33 test seasons per lead, first Maha 2009/10, 231 test rows.
+- **Models:** baseline_last5, ridge, random_forest, lightgbm, xgboost. The pilot's hybrid_lgbm is not run.
+- **Leave-district-out:** first seed, fixed parameters chosen before running: ridge alpha 10 and LightGBM 300 / 0.03 / 7 leaves (pilot values); RF min_samples_leaf 15, max_features 0.5, and XGBoost 200 / 0.03 / depth 3 (the lowest-capacity points of their grids).
+- **Conformal:** the pilot's split-conformal procedure at each lead. Calibration = the last 3 harvest years of each training window; models are fit on the rest. Standard, and Mondrian by season (Maha and Yala separately), for baseline, ridge and RF, seed 42, α = 0.1 (reliability α 0.5–0.05). With 7 districts a fold calibrates on about 21 Maha and 14 Yala residuals, so for Yala at α = 0.05 the interval is infinite. The report gives the share of infinite intervals instead of hiding them.
+- **Ablation and SHAP:** RF, seed 42, pilot variants (all; lagged_yield only; lagged + one group; all minus one group; no lagged_yield), per mask × lead. SHAP is TreeExplainer on each fold's test rows only. Features with no observed training value at that lead (blocks after the cutoff) get SHAP 0.
+- **Tests and Holm families:** paired Wilcoxon signed-rank on per-row absolute errors averaged over seeds, zeros dropped, effect = matched-pairs rank-biserial r. Holm correction within each family:
+  1. masked vs unmasked, forward, 4 models × 3 leads (12 tests);
+  2. model vs baseline, 2 masks × 3 leads × 4 models (24 tests);
+  3. lead 12 and lead 8 vs lead 4, 2 masks × 5 models (20 tests);
+  4. masked vs unmasked under leave-district-out (12 tests);
+  5. ablation, within each mask × lead.
+- **Evaluation rows:** every comparison uses only the rows predicted by every unit in it, and only where the baseline exists.
+- **Smoke test only** (last 3 test seasons, sandbox): it checks the code path. Its numbers are not results and are not reported.
+
+## Ridge mismatch in the pilot: RESULTS.md 620.2 vs results/predictions.csv 598.7 (2026-11-05)
+- **Explanation:** the two numbers come from two different runs; there is no bug.
+  - **620.2** is kernel 01 (`results/tables/model_comparison.csv`, `predictions_models.csv` seed 42): ridge tuned and fit on the **whole** training window of each fold.
+  - **598.7** is kernel 02 (`results/tables/predictions_conformal.csv`, `conformal_point_metrics.csv`): ridge fit on the **proper** set only, i.e. the training window **minus its last 3 harvest years**, which are held back for conformal calibration.
+- **Where it comes from:** `results/predictions.csv` is written by `src/analysis/report_figures.predictions_file()` as a copy of `predictions_conformal.csv`, so it carries the kernel-02 point predictions. Checked: the maximum absolute difference between `predictions.csv` and `predictions_conformal.csv` is 9.1e-13 kg/ha for every model.
+- **Same rows:** both runs score the same 808 rows. The same file also explains the RF difference (605.8 in kernel 01 vs 607.0 in predictions.csv); the baseline is 605.8 in both.
+- **What it means:** ridge does better *without* the 3 most recent training years (598.7 vs 620.2). This is one more sign that ridge is unstable here, consistent with its poor earliness results. It is not evidence that ridge is the best model. RESULTS.md must say which run each number comes from, and predictions.csv must be labelled as the conformal (proper-set) predictions.
