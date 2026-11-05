@@ -48,3 +48,4 @@ kaggle/_build/
 results/runs/
 setup_log.txt
 requirements-freeze.txt
+*.joblib
