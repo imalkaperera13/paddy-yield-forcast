@@ -213,7 +213,7 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - **Folds per lead:** forward chaining at leads 12, 8 and 4. Each lead has its own forecast date, so its own label-availability rule. 33 test seasons per lead, first Maha 2009/10, 231 test rows.
 - **Models:** baseline_last5, ridge, random_forest, lightgbm, xgboost. The pilot's hybrid_lgbm is not run.
 - **Leave-district-out:** first seed, fixed parameters chosen before running: ridge alpha 10 and LightGBM 300 / 0.03 / 7 leaves (pilot values); RF min_samples_leaf 15, max_features 0.5, and XGBoost 200 / 0.03 / depth 3 (the lowest-capacity points of their grids).
-- **Conformal:** the pilot's split-conformal procedure at each lead. Calibration = the last 3 harvest years of each training window; models are fit on the rest. Standard, and Mondrian by season (Maha and Yala separately), for baseline, ridge and RF, seed 42, α = 0.1 (reliability α 0.5–0.05). With 7 districts a fold calibrates on about 21 Maha and 14 Yala residuals, so for Yala at α = 0.05 the interval is infinite. The report gives the share of infinite intervals instead of hiding them.
+- **Conformal:** the pilot's split-conformal procedure at each lead. Calibration = the last 3 harvest years of each training window; models are fit on the rest. Standard, and Mondrian by season (Maha and Yala separately), for baseline, ridge and RF, seed 42, α = 0.1 (reliability α 0.5–0.05). The report gives the share of infinite intervals (if any) instead of hiding them. **Correction after the run:** I had expected infinite Yala intervals at α = 0.05 (14 Yala calibration rows). That count applies only to Maha test folds, which do not use the Yala rows. Each test row is calibrated on its own season, which has 21 rows in every fold, so all intervals are finite (`masked_conformal.csv`, share_infinite = 0).
 - **Ablation and SHAP:** RF, seed 42, pilot variants (all; lagged_yield only; lagged + one group; all minus one group; no lagged_yield), per mask × lead. SHAP is TreeExplainer on each fold's test rows only. Features with no observed training value at that lead (blocks after the cutoff) get SHAP 0.
 - **Tests and Holm families:** paired Wilcoxon signed-rank on per-row absolute errors averaged over seeds, zeros dropped, effect = matched-pairs rank-biserial r. Holm correction within each family:
   1. masked vs unmasked, forward, 4 models × 3 leads (12 tests);
@@ -231,3 +231,14 @@ Code: `src/validation/splitters.py`; tests: `tests/test_splitters.py`, run on a 
 - **Where it comes from:** `results/predictions.csv` is written by `src/analysis/report_figures.predictions_file()` as a copy of `predictions_conformal.csv`, so it carries the kernel-02 point predictions. Checked: the maximum absolute difference between `predictions.csv` and `predictions_conformal.csv` is 9.1e-13 kg/ha for every model.
 - **Same rows:** both runs score the same 808 rows. The same file also explains the RF difference (605.8 in kernel 01 vs 607.0 in predictions.csv); the baseline is 605.8 in both.
 - **What it means:** ridge does better *without* the 3 most recent training years (598.7 vs 620.2). This is one more sign that ridge is unstable here, consistent with its poor earliness results. It is not evidence that ridge is the best model. RESULTS.md must say which run each number comes from, and predictions.csv must be labelled as the conformal (proper-set) predictions.
+
+## Step 6 — run record and outcome (2026-11-05)
+- **Runs:** kernels `paddy-06a-masked-models` v1 (180 prediction files, 18,148 s of fitting) and `paddy-06b-masked-followups` v1 (78 prediction files + 6 SHAP files), code commit `272c570`, dataset `paddycast-masked` (version with `feature_list.json`).
+- **Tables:** `python -m src.experiments.masked_compare report` → 14 tables `results/tables/masked_*.csv`. Write-up in `results/RESULTS.md` §11.
+- **Outcome:**
+  - The static paddy mask gives no significant improvement (forward chaining).
+  - Under leave-district-out it is significantly worse for the random forest at lead 8.
+  - No model beats the last-5 baseline.
+  - The masked features are not adopted. The model card is updated.
+- **Optional follow-ups, not run:** k = 2 mask sensitivity; rolling mask.
+

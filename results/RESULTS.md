@@ -21,6 +21,8 @@ Setup: forward-chaining by season, lead 0 (forecast at the reference harvest dat
 
 Ridge and the baseline are deterministic, so their std is 0.
 
+**Note on ridge (620.2 here vs 598.7 in `results/predictions.csv`):** these are two different runs. 620.2 is this kernel (01): ridge fit on the whole training window of each fold. `results/predictions.csv` is a copy of the conformal predictions from kernel 02 (§8), where each model is fit **without** the last 3 training years, which are kept for calibration; there ridge scores 598.7. Both are on the same 808 rows. The RF difference (605.8 here vs 607.0 in predictions.csv) has the same cause. Details in `docs/decisions.md`.
+
 ## 2. Paired Wilcoxon test vs the baseline (`wilcoxon_vs_baseline.md`)
 The test pairs each model's absolute errors with the baseline's on the same 808 rows. p-values are Holm-adjusted across 5 comparisons. A positive r means the model's errors are smaller.
 
@@ -174,3 +176,101 @@ RMSE in kg/ha, R² in brackets:
 | +2 weeks | 605.8 | 604.4 | 630.6 |
 
 The random forest changes by at most 5.5 kg/ha, within run-to-run variation. Conclusions do not depend on the nominal planting dates.
+
+## 11. Static paddy mask vs WorldCover cropland: 7 study districts, leads 12 / 8 / 4 weeks (Step 6)
+- **Sources:**
+  - Kaggle kernels `imalkaperera/paddy-06a-masked-models` v1 (forward chaining + leave-district-out; 180 runs, 18,148 s of fitting) and `imalkaperera/paddy-06b-masked-followups` v1 (conformal, ablation, SHAP). Both private, CPU, internet off.
+  - Code commit `272c570`; scikit-learn 1.6.1, LightGBM 4.6.0, XGBoost 3.4.1, SHAP 0.54.1.
+  - Data: private dataset `imalkaperera/paddycast-masked` (the version that includes `feature_list.json`), holding `master_masked.parquet` and `master_unmasked_7d.parquet`.
+  - Tables: `python -m src.experiments.masked_compare report` → `results/tables/masked_*.csv`.
+- **Setup:**
+  - 7 districts (Anuradhapura, Ampara, Kurunegala, Polonnaruwa, Batticaloa, Hambantota, Trincomalee).
+  - Forward chaining at each lead with its own label-availability rule: 33 test seasons (Maha 2009/10 – Maha 2025/26), 231 district-seasons, the same rows for every mask × lead × model × seed. 5 seeds.
+  - **Masked** = features inside the static 2000–2008 paddy mask (Steps 2–3). **Unmasked** = the pilot's WorldCover-cropland features for the same rows. Same folds, seeds and tuning grids; only the feature values differ.
+  - The baseline (last-5 same-season mean) does not depend on the mask or the lead.
+- **Not comparable with §1–10:** those use 25 districts and 808 rows. The baseline RMSE here (621.6) is on different rows from the pilot's 605.8.
+
+### 11.1 Accuracy (`masked_model_comparison.csv`)
+RMSE in kg/ha, mean over 5 seeds (seed std ≤ 6.5; ridge and baseline have std 0):
+
+| model | masked L12 | masked L8 | masked L4 | unmasked L12 | unmasked L8 | unmasked L4 |
+|---|---|---|---|---|---|---|
+| **baseline_last5** | 621.6 | 621.6 | 621.6 | 621.6 | 621.6 | 621.6 |
+| random_forest | 647.0 | 643.9 | 635.5 | 648.2 | 644.1 | 636.0 |
+| ridge | 650.5 | 722.0 | 660.5 | 661.9 | 696.1 | 662.2 |
+| xgboost | 698.2 | 683.3 | 652.1 | 703.1 | 687.2 | 654.8 |
+| lightgbm | 691.8 | 680.3 | 656.4 | 699.2 | 685.1 | 657.7 |
+
+R²: baseline 0.492; best model, random forest masked L4, 0.469.
+
+### 11.2 Masked vs unmasked (`masked_vs_unmasked_wilcoxon.csv`, `masked_vs_unmasked_ldo_wilcoxon.csv`)
+Paired Wilcoxon on per-row absolute errors (seed-averaged), 231 pairs. Holm across 4 models × 3 leads = 12 tests. Positive r means the masked features give smaller errors.
+- **Forward chaining: no significant difference** for any model at any lead.
+  - Smallest adjusted p: ridge at lead 12, r = +0.22, raw p = 0.004, p (Holm) = 0.0505.
+  - Random forest: |r| ≤ 0.025 and raw p ≥ 0.74 at every lead; RMSE differs by at most 1.2 kg/ha.
+- **Leave-district-out (fixed parameters, seed 42):** one significant difference, and it favours the unmasked features: random forest at lead 8, r = −0.22, p (Holm) = 0.047 (RMSE 709.3 masked vs 702.8 unmasked). No other model or lead differs.
+- **Finding (failed hypothesis, reported plainly):** restricting MODIS, CHIRPS and ERA5-Land features to the static paddy mask **does not improve** forecasts in these 7 districts at 4–12 weeks lead.
+
+### 11.3 Models vs the baseline (`masked_wilcoxon_vs_baseline.csv`; Holm over 24 tests)
+- **No model is significantly better than the baseline** at any lead with either mask.
+- **Ridge at lead 8 is significantly worse**, with both masks:
+  - masked: r = −0.27, p (Holm) = 0.008;
+  - unmasked: r = −0.24, p (Holm) = 0.032.
+- **The random forest has a slightly smaller median error than the baseline** (median gain +3.4 to +10.5 kg/ha; r +0.02 to +0.08; p (Holm) = 1.0) but a **higher RMSE**, so it makes larger misses.
+
+### 11.4 Earliness (`masked_earliness_wilcoxon.csv`; lead 12 and 8 vs lead 4, Holm over 20 tests)
+- **Errors grow when the forecast is made earlier.** The difference is significant for:
+  - XGBoost at leads 8 and 12 with both masks (r −0.23 to −0.26);
+  - ridge at lead 8 with both masks;
+  - LightGBM at lead 8, unmasked.
+- **The random forest is the most stable model:** 635.5 → 647.0 kg/ha from lead 4 to lead 12 (masked); no significant difference (smallest p (Holm) = 0.076).
+- **The baseline is the same at every lead:** the same-season yields it uses are already published 12 weeks before harvest.
+
+### 11.5 Leave-district-out (`masked_leave_district_out.csv`)
+- **Every model falls well behind the baseline** when the test district is left out of training:
+  - random forest 695.1–709.3 kg/ha;
+  - ridge 699.2–764.0;
+  - LightGBM 714.4–760.4;
+  - XGBoost 728.1–781.5;
+  - baseline 621.6.
+
+### 11.6 Conformal intervals (`masked_conformal.csv`, `masked_conformal_by_season.csv`; seed 42; target 90%)
+- **Coverage is below 90% everywhere.**
+  - Standard: 0.831–0.879 across baseline, ridge and random forest, both masks and all leads.
+  - Mondrian by season: 0.814–0.853.
+- **Intervals are wide:** mean width 2,034–2,360 kg/ha, i.e. 45–53% of mean yield.
+- **The Mondrian variant matches the two seasons' error levels:** Yala intervals are narrower (1,613–1,893 kg/ha) and Maha intervals wider (2,430–2,643).
+  - Coverage: Maha 0.798–0.857, Yala 0.812–0.875.
+  - Standard intervals by season: Maha 0.765–0.857, Yala 0.857–0.911.
+- **No infinite intervals:** every fold calibrates on 21 rows of the test row's own season.
+- **The mask changes coverage by at most 5 of 231 rows** for any model, variant and lead.
+
+### 11.7 Feature-group ablation and SHAP (random forest, seed 42; `masked_ablation*.csv`, `masked_shap_group_share.csv`)
+- **No feature set beats the baseline.** The best variant at each mask × lead scores 632.9–640.0 kg/ha, against the baseline's 621.6.
+- **Lagged yield only** gives 640.0 at every lead with both masks. It uses no satellite data, so it is identical in both.
+- **Significant results after Holm (within each mask × lead):**
+  - Dropping the lagged yields is significantly worse than both the baseline and 'all' in every case (r −0.34 to −0.43).
+  - At unmasked lead 12, lagged yield + rainfall beats 'all' (r +0.23, p (Holm) = 0.042).
+  - Nothing else is significant. Removing MODIS is not significant here, unlike the 25-district lead-0 pilot (§9).
+- **SHAP share** of total mean |SHAP|:
+
+  | feature group | share |
+  |---|---|
+  | lagged yield | 74.6–81.5% |
+  | temperature/radiation | 7.3–12.2% |
+  | MODIS | 6.3–8.2% |
+  | rainfall | 4.6–5.5% |
+
+  The lagged-yield share grows with lead (from 75–76% at lead 4 to 81–82% at lead 12), as fewer satellite composites are available before the cutoff.
+
+### 11.8 Reading
+- **Main finding:** in the 7 flat dry/intermediate-zone districts, at 4–12 weeks before harvest:
+  - no model beats the last-5-seasons mean;
+  - the static paddy mask gives no measurable gain over WorldCover cropland;
+  - skill still comes almost entirely from each district's own yield history.
+- **Possible reasons, not tested:**
+  - Only 231 test rows, so small effects cannot be detected.
+  - The features are district means, which smooth out field-level signal.
+  - The static mask is conservative and falls below DCS sown area after 2008 (e.g. Anuradhapura Yala ratio 1.25 → 0.52; `mask_static_validation.csv`).
+  - The 2021–22 fertiliser-ban seasons dominate the errors, and no feature can see them.
+

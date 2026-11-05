@@ -1,0 +1,13 @@
+lead,model,comparison,n_pairs,n_nonzero,median_gain_kg_ha,share_better,W,p_value,rank_biserial_r,p_holm,holm_family,family_size
+4,lightgbm,masked vs unmasked (LDO),231,231,7.671639596647765,0.5367965367965368,12518.0,0.3867854706082301,0.06568144499178982,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+4,random_forest,masked vs unmasked (LDO),231,231,-1.1121525819680755,0.47186147186147187,12603.0,0.4342933879583326,-0.059337214509628304,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+4,ridge,masked vs unmasked (LDO),231,231,-8.890343377664976,0.4805194805194805,12372.0,0.31295085939781997,-0.07657859381997313,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+4,xgboost,masked vs unmasked (LDO),231,231,2.86083984375,0.5194805194805194,13334.0,0.9498121615885918,0.004776832363039259,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+8,lightgbm,masked vs unmasked (LDO),231,231,-7.653737674968397,0.47186147186147187,12744.0,0.5200973547406267,-0.048813255709807435,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+8,random_forest,masked vs unmasked (LDO),231,231,-5.051735935589932,0.4025974025974026,10466.0,0.0039320676694107265,-0.21883863263173609,0.04718481203292872,"masked vs unmasked, leave-district-out, models x leads",12
+8,ridge,masked vs unmasked (LDO),231,231,8.378417277061999,0.5151515151515151,12787.0,0.5479027692451173,0.04560382146589043,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+8,xgboost,masked vs unmasked (LDO),231,231,-3.20263671875,0.48484848484848486,13127.0,0.7898365708644723,-0.020226899537244363,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+12,lightgbm,masked vs unmasked (LDO),231,231,-4.238199268954304,0.4805194805194805,12312.0,0.2854942046004635,-0.08105687416032244,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+12,random_forest,masked vs unmasked (LDO),231,231,-0.7565025179437725,0.4805194805194805,12348.0,0.30176628136055506,-0.07836990595611286,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+12,ridge,masked vs unmasked (LDO),231,231,-5.386878708571203,0.4805194805194805,13331.0,0.9474629333407126,0.005000746380056725,1.0,"masked vs unmasked, leave-district-out, models x leads",12
+12,xgboost,masked vs unmasked (LDO),231,231,-4.82666015625,0.4935064935064935,13210.0,0.853312119014034,-0.014031945066427826,1.0,"masked vs unmasked, leave-district-out, models x leads",12

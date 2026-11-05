@@ -1,0 +1,31 @@
+mask,lead,group,share
+masked,4,lagged_yield,0.7560962067788759
+masked,4,modis,0.08198088479828348
+masked,4,rainfall,0.05451141066528775
+masked,4,season flag,2.8164326409420245e-05
+masked,4,temp_radiation,0.10738333343114355
+masked,8,lagged_yield,0.7767449550682287
+masked,8,modis,0.07776476249028469
+masked,8,rainfall,0.04937757241900127
+masked,8,season flag,4.864734300372631e-05
+masked,8,temp_radiation,0.09606406267948159
+masked,12,lagged_yield,0.8153920864405168
+masked,12,modis,0.06523181375566646
+masked,12,rainfall,0.04580650858545398
+masked,12,season flag,6.998081271713573e-05
+masked,12,temp_radiation,0.07349961040564561
+unmasked,4,lagged_yield,0.7463634422576574
+unmasked,4,modis,0.07958894777898627
+unmasked,4,rainfall,0.052391097742406426
+unmasked,4,season flag,2.1873339304269613e-05
+unmasked,4,temp_radiation,0.12163463888164563
+unmasked,8,lagged_yield,0.7745538490669598
+unmasked,8,modis,0.07350072491514449
+unmasked,8,rainfall,0.048049992637391736
+unmasked,8,season flag,8.390750381684916e-06
+unmasked,8,temp_radiation,0.10388704263012231
+unmasked,12,lagged_yield,0.8108594785179346
+unmasked,12,modis,0.06272407443166532
+unmasked,12,rainfall,0.04606648964587782
+unmasked,12,season flag,4.425753120949364e-05
+unmasked,12,temp_radiation,0.0803056998733128

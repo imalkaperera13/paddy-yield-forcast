@@ -1,0 +1,25 @@
+mask,lead,model,comparison,n_pairs,n_nonzero,median_gain_kg_ha,share_better,W,p_value,rank_biserial_r,p_holm,holm_family,family_size
+masked,4,lightgbm,model vs baseline_last5,231,231,-8.27919736797719,0.47619047619047616,12573.0,0.41715306570304855,-0.06157635467980296,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,4,random_forest,model vs baseline_last5,231,231,7.332358456948668,0.5324675324675324,12282.0,0.27239548989677664,0.08329601433049709,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,4,ridge,model vs baseline_last5,231,231,11.74953027835636,0.5238095238095238,13102.0,0.7709673306315531,-0.022092849679056576,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,4,xgboost,model vs baseline_last5,231,231,9.404980468750182,0.5281385281385281,13292.0,0.9169719188422873,0.007911628601283773,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,8,lightgbm,model vs baseline_last5,231,231,-29.24509094025261,0.43722943722943725,11666.0,0.08849588736200793,-0.12927302582474998,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,8,random_forest,model vs baseline_last5,231,231,10.13639620972063,0.5367965367965368,12713.0,0.5005127476819158,0.05112703388565457,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,8,ridge,model vs baseline_last5,231,231,-47.25733153105921,0.3939393939393939,9760.0,0.0003463698446957613,-0.2715330646365129,0.008312876272698272,"model vs baseline, forward, masks x leads x models",24
+masked,8,xgboost,model vs baseline_last5,231,231,7.145898437500001,0.5194805194805194,12504.0,0.3792764018126459,-0.06672637707120466,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,12,lightgbm,model vs baseline_last5,231,231,-16.098505918314913,0.46320346320346323,11500.0,0.06195140745842012,-0.14166293476638303,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,12,random_forest,model vs baseline_last5,231,231,3.658143417486656,0.5281385281385281,12862.0,0.5980930331037555,0.0400059710404538,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,12,ridge,model vs baseline_last5,231,231,-5.948216782488998,0.48917748917748916,12662.0,0.46916358185183027,-0.054933572174951484,1.0,"model vs baseline, forward, masks x leads x models",24
+masked,12,xgboost,model vs baseline_last5,231,231,-12.479101562500006,0.4805194805194805,11881.0,0.13571544640594377,-0.11322585460516495,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,4,lightgbm,model vs baseline_last5,231,231,-15.798652125939782,0.46320346320346323,12218.0,0.24584311317062824,-0.08807284669353635,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,4,random_forest,model vs baseline_last5,231,231,10.532021816263466,0.5194805194805194,12622.0,0.4453561767092221,0.05791909240185102,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,4,ridge,model vs baseline_last5,231,231,17.304444392446385,0.5367965367965368,13334.0,0.9498121615885918,-0.004776832363039259,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,4,xgboost,model vs baseline_last5,231,231,4.986328125000181,0.5194805194805194,13171.0,0.8233411263784802,-0.016942827287654873,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,8,lightgbm,model vs baseline_last5,231,231,-37.03264127795046,0.44155844155844154,11204.0,0.03094702651016691,-0.16375578444543962,0.6189405302033382,"model vs baseline, forward, masks x leads x models",24
+unmasked,8,random_forest,model vs baseline_last5,231,231,9.803419686303641,0.5194805194805194,12858.0,0.5953642274061156,0.040304523063143756,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,8,ridge,model vs baseline_last5,231,231,-32.97856137717281,0.4025974025974026,10143.0,0.0013684485353307665,-0.24294670846394983,0.03147431631260763,"model vs baseline, forward, masks x leads x models",24
+unmasked,8,xgboost,model vs baseline_last5,231,231,-7.976855468750188,0.4935064935064935,11780.0,0.11154900241976917,-0.12076429317808628,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,12,lightgbm,model vs baseline_last5,231,231,-28.650021547598044,0.42857142857142855,10694.0,0.007829680495059483,-0.2018211673384087,0.17225297089130864,"model vs baseline, forward, masks x leads x models",24
+unmasked,12,random_forest,model vs baseline_last5,231,231,3.382732618649605,0.5108225108225108,13074.0,0.7499940313364422,0.02418271383788625,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,12,ridge,model vs baseline_last5,231,231,-3.649059478626441,0.48917748917748916,11925.0,0.1474312317995295,-0.10994178235557546,1.0,"model vs baseline, forward, masks x leads x models",24
+unmasked,12,xgboost,model vs baseline_last5,231,231,-29.552734374999815,0.44155844155844154,10848.0,0.01214607425711571,-0.1903269144648455,0.25506755939942993,"model vs baseline, forward, masks x leads x models",24

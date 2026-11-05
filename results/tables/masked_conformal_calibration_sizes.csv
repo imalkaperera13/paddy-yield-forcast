@@ -1,0 +1,13 @@
+mask,lead,season,n_calib_min,n_calib_median,n_calib_same_season_min,n_calib_same_season_median
+masked,4,Maha,35.0,35.0,21.0,21.0
+masked,4,Yala,42.0,42.0,21.0,21.0
+masked,8,Maha,35.0,35.0,21.0,21.0
+masked,8,Yala,42.0,42.0,21.0,21.0
+masked,12,Maha,35.0,35.0,21.0,21.0
+masked,12,Yala,42.0,42.0,21.0,21.0
+unmasked,4,Maha,35.0,35.0,21.0,21.0
+unmasked,4,Yala,42.0,42.0,21.0,21.0
+unmasked,8,Maha,35.0,35.0,21.0,21.0
+unmasked,8,Yala,42.0,42.0,21.0,21.0
+unmasked,12,Maha,35.0,35.0,21.0,21.0
+unmasked,12,Yala,42.0,42.0,21.0,21.0

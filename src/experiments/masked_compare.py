@@ -414,7 +414,9 @@ def report(run_dirs: list[Path], out: Path, input_dir: Path) -> None:
         save(cc.groupby(["mask", "lead", "model"]).apply(
             lambda g: pd.Series(metrics(g.y_true, g.y_pred)), include_groups=False)
             .reset_index(), "masked_conformal_point_metrics.csv")
-        save(cc.groupby(["mask", "lead"])[["n_calib", "n_calib_Maha", "n_calib_Yala"]]
+        cc["n_calib_same_season"] = np.where(cc.season == "Maha", cc.n_calib_Maha,
+                                             cc.n_calib_Yala)
+        save(cc.groupby(["mask", "lead", "season"])[["n_calib", "n_calib_same_season"]]
              .agg(["min", "median"]).pipe(lambda t: t.set_axis(
                  [f"{a}_{b}" for a, b in t.columns], axis=1)).reset_index(),
              "masked_conformal_calibration_sizes.csv")

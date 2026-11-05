@@ -33,12 +33,20 @@ All figures come from honest forward-chaining validation (33 test seasons, 808 d
 - **Earliness:** 12 weeks before harvest the random forest's RMSE is 614.9 (kernel 03).
 - **90% split-conformal intervals:** coverage 0.861 overall; 0.903 outside and 0.566 inside the named shock seasons (kernel 02).
 
+## Step 6 evaluation: static paddy mask, 7 districts, leads 12 / 8 / 4 (`results/RESULTS.md` §11)
+- **No new final model was trained** in Step 6, and the release files above are unchanged. Step 6 only evaluates whether features inside the static 2000–2008 paddy mask help.
+- **Result:** in the 7 study districts (231 forward-chaining test rows, 5 seeds), the masked features give **no significant gain** over WorldCover-cropland features for any model at any lead (paired Wilcoxon, Holm over 12 tests).
+  - Under leave-district-out, the random forest at lead 8 is significantly **worse** with the mask (p (Holm) = 0.047).
+- **Baseline still wins:** no model beats the last-5 mean (621.6 kg/ha). The best model is the random forest, at 635.5 (masked, lead 4) to 648.2 (unmasked, lead 12).
+- **90% conformal intervals** cover 0.81–0.88 and are 45–53% of mean yield wide.
+- **Decision:** the masked features are **not adopted**. For these districts and leads, the recommended point forecast is the baseline, and any model forecast should be reported next to it.
+
 ## Prediction intervals in this release
 The conformal q in `final_models.json` uses the last 3 harvest years (2024–2026) as calibration: ±910.6 kg/ha (`rf_all`) and ±817.5 kg/ha (`rf_lagged_modis`) for α = 0.1. These calibration years follow the 2021–22 crisis, so the intervals are wide.
 
 ## Limitations and risks
 - **Shocks:** the model does not see policy or economic shocks. In the 2021/22 fertiliser-ban season every model over-forecast by about 1,400–1,560 kg/ha, and interval coverage collapses in such seasons.
-- **Weather signal:** rainfall and temperature/radiation features add no measurable skill at district scale. Skill comes mostly from the district's own yield history.
+- **Weather signal:** rainfall and temperature/radiation features add no measurable skill at district scale, with or without the paddy mask (Step 6). Skill comes mostly from the district's own yield history.
 - **Cropland mask:** WorldCover has no paddy class, and wet-zone paddy is under-mapped (mask/area ratio 0.10–0.47).
 - **Labels:** the label-publication lag (6 months) is an assumption. The Mahaweli H / Udawalawe merge (2017/18) is a structural break.
 - **Coverage gap:** Jaffna has no Yala data.
